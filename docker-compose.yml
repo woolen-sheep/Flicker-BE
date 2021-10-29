@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:5.0.3
+    volumes:
+      - ./data/mongo:/data/db
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Asia/Shanghai
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+    container_name: Flicker_mongo
+    expose:
+      - "27017"
+  redis:
+    image: redis:6.2.6
+    expose:
+      - "6379"
+    environment:
+      - TZ=Asia/Shanghai
+    container_name: Flicker_redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ./data/redis:/data
+      - /etc/localtime:/etc/localtime:ro
+    tty: true
+  app:
+    build: .
+    environment:
+      - TZ=Asia/Shanghai
+      - ENV=prod
+    ports:
+      - "3265:3000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./configs:/configs
+      - ./log:/app/log
+    depends_on:
+      - mongo
+      - redis
+    container_name: Flicker_app

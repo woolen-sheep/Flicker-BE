@@ -1,0 +1,27 @@
+app:
+  addr: ":3000"
+  prefix: "/api/v1"
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+db:
+  addr: "localhost:27017"
+  db: "Flicker"
+  username: ""
+  password: ""
+jwt:
+  secret: ""
+  skip:
+    - "/verify"
+    - "/login"
+qiniu:
+  access_key: "access_key"
+  secret_key: "secret_key"
+  bucket: "bucket"
+
+logConf:
+  log_path: "/app/log"
+  log_file_name: "Flicker-BE.log"
+
+debug: true
