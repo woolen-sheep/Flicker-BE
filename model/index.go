@@ -7,22 +7,17 @@ import (
 	"github.com/woolen-sheep/Flicker-BE/config"
 )
 
-type ChatModel interface {
-	AddMessage(msg, association, newerID string) error
-	GetMessage(association, newerID string) ([]string, error)
-	ClearMessage(association, newerID string) error
-	IncrChattingCounter(association, newerID string) error
-	DecrChattingCounter(association, newerID string) error
-	GetChatCount(association, newerID string) (int, error)
-	Close()
-}
-
 type Model interface {
 	// Close will close database connection
 	Close()
 	// Abort will stop all statement and roll back when using transaction
 	Abort()
-	// TODO: add interfaces
+	// VerifyCode
+	VerifyCodeBlocking(mail string) (bool, error)
+	SetVerifyCode(mail, code string) error
+	GetVerifyCode(mail string) (string, error)
+	// UserInterface contains all user functions in model layer
+	UserInterface
 }
 
 type model struct {

@@ -1,20 +1,32 @@
 app:
   addr: ":3000"
   prefix: "/api/v1"
+
 redis:
   addr: "localhost:6379"
   password: ""
   db: 0
+
 db:
   addr: "localhost:27017"
   db: "Flicker"
   username: ""
   password: ""
+
 jwt:
   secret: ""
   skip:
-    - "/verify"
-    - "/login"
+    - "/api/v1/verify"
+    - "/api/v1/login"
+    - "/api/v1/user/"
+    -
+mail:
+  address: "noreply@woolensheep.top"
+  password: "9bEgRmG38ksEJKQ6"
+  sender: "Flicker"
+  host: "smtp.exmail.qq.com"
+  port: 465
+
 qiniu:
   access_key: "access_key"
   secret_key: "secret_key"

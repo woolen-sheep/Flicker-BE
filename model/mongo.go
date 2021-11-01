@@ -1,18 +1,21 @@
 package model
 
 import (
+	"errors"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"golang.org/x/net/context"
 	"github.com/woolen-sheep/Flicker-BE/config"
 	. "github.com/woolen-sheep/Flicker-BE/util/log"
-	"time"
+	"golang.org/x/net/context"
 )
 
 var (
+	ErrNotFound = mongo.ErrNoDocuments
+	ErrExist    = errors.New("already existed")
 	mongoClient *mongo.Client
 )
 
@@ -23,7 +26,12 @@ type dbTrait struct {
 func init() {
 	var err error
 	uri := fmt.Sprintf("mongodb://%s", config.C.DB.Addr)
-	mongoClient, err = mongo.NewClient(options.Client().ApplyURI(uri))
+	credential := options.Credential{
+		Username: config.C.DB.Username,
+		Password: config.C.DB.Password,
+	}
+	clientOpts := options.Client().ApplyURI(uri).SetAuth(credential)
+	mongoClient, err = mongo.NewClient(clientOpts)
 	if err != nil {
 		panic(err)
 	}

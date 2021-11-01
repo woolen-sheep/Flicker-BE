@@ -1,9 +1,10 @@
 package util
 
 import (
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/woolen-sheep/Flicker-BE/config"
-	"time"
 )
 
 const (

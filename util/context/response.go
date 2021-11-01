@@ -3,8 +3,6 @@ package context
 import (
 	"net/http"
 
-	"github.com/woolen-sheep/Flicker-BE/config"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,17 +25,14 @@ func Success(c echo.Context, data interface{}) error {
 }
 
 // Error 错误
-func Error(c echo.Context, status int, data string, err error) error {
+func Error(c echo.Context, status int, message string, err error) error {
 	ret := Response{
 		Data:    nil,
-		Error:   data,
+		Message: message,
 		Success: false,
 	}
-
-	if config.C.Debug {
-		if err != nil {
-			ret.Error = err.Error()
-		}
+	if err != nil {
+		ret.Error = err.Error()
 	}
 
 	return c.JSON(status, ret)

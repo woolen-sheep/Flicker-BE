@@ -27,7 +27,7 @@ data 可以为任何类型，***之后文档中只写出data的数据***
     "success": false,
     "message": "错误提示信息",
     "error": "错误显示信息",
-    "data": null,
+    "data": null
 }
 ```
 
@@ -74,8 +74,6 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-
-
 ### POST /login 登录
 
 #### 请求参数
@@ -101,8 +99,6 @@ Authorization: Bearer 一个巨长的token
 ```json
 "jwt"
 ```
-
-
 
 ## 用户 /user
 
@@ -146,7 +142,7 @@ Authorization: Bearer 一个巨长的token
 - password：字符串，可选，密码
 - code：字符串，当`password`不为空时必需，邮件验证码
 - avatar：字符串，可选，头像url
-  - 这个之后再加，需要考虑一下要不要上七牛
+    - 这个之后再加，需要考虑一下要不要上七牛
 
 #### 请求示例
 
@@ -168,8 +164,6 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-
-
 ## 卡片集 /cardset
 
 - alias 题库
@@ -181,12 +175,12 @@ Authorization: Bearer 一个巨长的token
 - name：字符串，必需，名称
 - description：字符串，可选，卡片集描述
 - template：字符串，可选，模板
-  - 模板一定程度上规定了卡片的样式与布局
-  - 暂定为HTML格式，具体如何设计看前端
-  - 当此字段为空时应使用默认的样式
+    - 模板一定程度上规定了卡片的样式与布局
+    - 暂定为HTML格式，具体如何设计看前端
+    - 当此字段为空时应使用默认的样式
 - access：整数，可选，访问权限
-  - 0-仅创建者可见，1-所有人可见
-  - 默认权限为0
+    - 0-仅创建者可见，1-所有人可见
+    - 默认权限为0
 
 #### 请求示例
 
@@ -208,8 +202,6 @@ Authorization: Bearer 一个巨长的token
 "id"
 ```
 
-
-
 ### PUT /:id 修改卡片集信息
 
 #### 请求参数
@@ -217,12 +209,12 @@ Authorization: Bearer 一个巨长的token
 - id：字符串，必需，卡片id
 
 - name：字符串，可选，名称
-  - 参数留空时表示不做修改，下同
+    - 参数留空时表示不做修改，下同
 - description：字符串，可选，卡片集描述
 - template：字符串，可选，模板
-  - 模板一定程度上规定了卡片的样式与布局
-  - 暂定为HTML格式，具体如何设计看前端
-  - 当此字段为空时应使用默认的样式
+    - 模板一定程度上规定了卡片的样式与布局
+    - 暂定为HTML格式，具体如何设计看前端
+    - 当此字段为空时应使用默认的样式
 - access：整数，可选，访问权限
 
 #### 请求示例
@@ -245,8 +237,6 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-
-
 ### DELETE /:id 删除卡片集
 
 #### 请求参数
@@ -262,8 +252,6 @@ Authorization: Bearer 一个巨长的token
 ```json
 "ok"
 ```
-
-
 
 ### GET /:id 获取卡片集
 
@@ -289,8 +277,6 @@ Authorization: Bearer 一个巨长的token
     "cards":[]
 }
 ```
-
-
 
 ## 卡片 /cardset/:cardset_id/card
 
@@ -326,8 +312,6 @@ Authorization: Bearer 一个巨长的token
 "id"
 ```
 
-
-
 ### PUT/:id 修改卡片
 
 #### 请求参数
@@ -360,8 +344,6 @@ Authorization: Bearer 一个巨长的token
 "id"
 ```
 
-
-
 ### GET /:id 获取卡片
 
 #### 请求参数
@@ -386,8 +368,6 @@ Authorization: Bearer 一个巨长的token
 }
 ```
 
-
-
 ### DELETE /:id 删除卡片
 
 #### 请求参数
@@ -403,8 +383,6 @@ Authorization: Bearer 一个巨长的token
 ```json
 "ok"
 ```
-
-
 
 ### POST /:id/comment 发表评论
 
@@ -431,8 +409,6 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-
-
 ### GET /:id/comment 获取评论列表
 
 #### 请求参数
@@ -448,11 +424,11 @@ Authorization: Bearer 一个巨长的token
 ```json
 [
     {
-    	"comment":"comment",
+    	"comment":"comment"
 	},
     {
     	"comment":"comment"
-	},
+	}
 ]
 ```
 
@@ -473,13 +449,9 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-
-
 ### tmp
 
 #### 请求参数
-
-
 
 #### 请求示例
 
@@ -488,8 +460,6 @@ Authorization: Bearer 一个巨长的token
 ```
 
 #### 响应参数
-
-
 
 #### 响应示例
 
