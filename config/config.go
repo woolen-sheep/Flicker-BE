@@ -22,7 +22,8 @@ var (
 )
 
 const (
-	DurationCodeExpire = time.Minute
+	DurationCodeExpire = time.Minute * 15
+	DurationCodeResend = time.Minute
 )
 
 // Config 配置
@@ -31,8 +32,8 @@ type Config struct {
 	DB      db      `yaml:"db"`
 	Redis   redis   `yaml:"redis"`
 	JWT     jwt     `yaml:"jwt"`
+	Mail    mail    `yaml:"mail"`
 	Qiniu   qiniu   `yaml:"qiniu"`
-	Wechat  wechat  `yaml:"wechat"`
 	LogConf logConf `yaml:"logConf"`
 	Debug   bool    `yaml:"debug"`
 }
@@ -60,15 +61,19 @@ type jwt struct {
 	Skip   []string `yaml:"skip"`
 }
 
+type mail struct {
+	Sender   string `yaml:"sender"`
+	Address  string `yaml:"address"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+}
+
 type qiniu struct {
 	AccessKey string `yaml:"access_key"`
 	SecretKey string `yaml:"secret_key"`
-	Bucket    string `yaml:"bucket"` // 空间
+	Bucket    string `yaml:"bucket"`
 	URL       string `yaml:"url"`
-}
-type wechat struct {
-	AppID     string `yaml:"app_id"`
-	AppSecret string `yaml:"app_secret"`
 }
 
 type logConf struct {
@@ -79,12 +84,12 @@ type logConf struct {
 func init() {
 	configFile := "default.yml"
 
-	// 如果有设置 ENV ，则使用ENV中的环境
+	// use config in `ENV` first
 	if v, ok := os.LookupEnv("ENV"); ok {
 		configFile = v + ".yml"
 	}
 
-	// 读取配置文件
+	// read config file
 	data, err := ioutil.ReadFile(fmt.Sprintf("configs/%s", configFile))
 
 	if err != nil {

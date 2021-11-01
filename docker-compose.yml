@@ -14,6 +14,8 @@ services:
     container_name: Flicker_mongo
     expose:
       - "27017"
+    ports:
+      - "27017:27017"
   redis:
     image: redis:6.2.6
     expose:
@@ -26,6 +28,8 @@ services:
       - ./data/redis:/data
       - /etc/localtime:/etc/localtime:ro
     tty: true
+    ports:
+      - "6379:6379"
   app:
     build: .
     environment:
