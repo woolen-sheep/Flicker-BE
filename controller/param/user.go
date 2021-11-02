@@ -13,3 +13,13 @@ type SignUpRequest struct {
 	Password string `json:"password" validate:"required"`
 	Code     string `json:"code" validate:"required"`
 }
+
+type LoginRequest struct {
+	Mail     string `json:"mail" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+type LoginResponse struct {
+	Mail     string `json:"mail" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
