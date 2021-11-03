@@ -10,6 +10,9 @@ import (
 	"github.com/woolen-sheep/Flicker-BE/util/context"
 )
 
+// SendVerifyCode will shed a verify code to the given email address. Two emails to
+// the same address SHOULD have a duration of one minute at least. Verify code will
+// have a expire duration of 15 minutes.
 func SendVerifyCode(c echo.Context) error {
 	p := param.VerifyCodeRequest{}
 
@@ -49,6 +52,7 @@ func SendVerifyCode(c echo.Context) error {
 	return context.Success(c, "ok")
 }
 
+// Login will check password and return a JWT token.
 func Login(c echo.Context) error {
 	p := param.LoginRequest{}
 	if err := c.Bind(&p); err != nil {
@@ -63,6 +67,10 @@ func Login(c echo.Context) error {
 	defer m.Close()
 
 	user, err := m.GetUserByMail(p.Mail)
+
+	if err == model.ErrNotFound {
+		return context.Error(c, http.StatusNotFound, "user not found", nil)
+	}
 	if err != nil {
 		return context.Error(c, http.StatusBadRequest, "error when get user", err)
 	}

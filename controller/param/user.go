@@ -14,6 +14,12 @@ type SignUpRequest struct {
 	Code     string `json:"code" validate:"required"`
 }
 
+type UpdateUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Avatar   string `json:"avatar"`
+}
+
 type LoginRequest struct {
 	Mail     string `json:"mail" validate:"required"`
 	Password string `json:"password" validate:"required"`
@@ -22,4 +28,9 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Mail     string `json:"mail" validate:"required"`
 	Password string `json:"password" validate:"required"`
+}
+
+type UserResponse struct {
+	Username string `json:"username"`
+	Avatar   string `json:"avatar"`
 }

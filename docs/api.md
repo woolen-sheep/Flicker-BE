@@ -164,6 +164,30 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
+
+
+### GET /:user_id 获取用户
+
+#### 请求参数
+
+- user_id：路径参数，用户id，缺省时获取当前登录用户信息
+
+#### 响应参数
+
+- username：字符串，可选，用户名
+- avatar：字符串，可选，头像url
+
+#### 响应示例
+
+```json
+{
+    "username":"xxx",
+    "avatar":"https://example.com/1.jpg"
+}
+```
+
+
+
 ## 卡片集 /cardset
 
 - alias 题库
