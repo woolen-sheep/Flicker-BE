@@ -48,3 +48,43 @@ func SendVerifyCode(c echo.Context) error {
 
 	return context.Success(c, "ok")
 }
+
+func Login(c echo.Context) error {
+	p := param.LoginRequest{}
+	if err := c.Bind(&p); err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	if err := c.Validate(p); err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	user, err := m.GetUserByMail(p.Mail)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "error when get user", err)
+	}
+
+	ok, err := util.ComparePassword(user.Password, p.Password)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when compare", err)
+	}
+	if !ok {
+		return context.Error(c, http.StatusBadRequest, "wrong password", nil)
+	}
+
+	claim := util.JWTClaims{
+		ID:       user.ID.Hex(),
+		Mail:     user.Mail,
+		Username: user.Username,
+	}
+
+	token, err := util.GenerateJWTToken(claim)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "internal server error", err)
+	}
+
+	return context.Success(c, token)
+}

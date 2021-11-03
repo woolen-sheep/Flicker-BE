@@ -15,8 +15,9 @@ const (
 // JWTClaims 使用的JWT结构，JWT的修改请直接修改结构中的字段
 type JWTClaims struct {
 	jwt.StandardClaims
-	ID int `json:"id"`
-	// TODO: 填写JWT字段
+	ID       string `json:"id"`
+	Mail     string `json:"mail"`
+	Username string `json:"username"`
 }
 
 // GenerateJWTToken 根据键值对生成jwt token

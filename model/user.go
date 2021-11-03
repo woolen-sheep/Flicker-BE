@@ -14,6 +14,8 @@ const colNameUser = "user"
 type UserInterface interface {
 	userC() *mongo.Collection
 	AddUser(user User) (primitive.ObjectID, error)
+	GetUser(id primitive.ObjectID) (User, bool, error)
+	GetUserByMail(mail string) (user User, err error)
 	//UpdateUser(id primitive.ObjectID, toUpdate bson.M) error
 }
 
@@ -62,4 +64,23 @@ func (m *model) AddUser(user User) (primitive.ObjectID, error) {
 		return res, ErrExist
 	}
 	return user.ID, err
+}
+
+// GetUser by id
+func (m *model) GetUser(id primitive.ObjectID) (User, bool, error) {
+	user := User{}
+	err := m.userC().FindOne(m.ctx, bson.M{"_id": id}).Decode(&user)
+	if err == mongo.ErrNoDocuments {
+		return user, false, nil
+	}
+	if err != nil {
+		return user, false, err
+	}
+	return user, true, err
+}
+
+func (m *model) GetUserByMail(mail string) (user User, err error) {
+	filter := bson.D{{"mail", mail}}
+	err = m.userC().FindOne(m.ctx, filter).Decode(&user)
+	return user, err
 }
