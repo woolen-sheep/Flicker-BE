@@ -12,25 +12,24 @@ import (
 const colNameUser = "user"
 
 type UserInterface interface {
-	userC() *mongo.Collection
-	AddUser(user User) (primitive.ObjectID, error)
-	GetUser(id primitive.ObjectID) (User, bool, error)
+	AddUser(user User) (string, error)
+	GetUser(id string) (User, bool, error)
 	GetUserByMail(mail string) (user User, err error)
-	//UpdateUser(id primitive.ObjectID, toUpdate bson.M) error
+	UpdateUser(user User) error
 }
 
 // User struct in model layer
 type User struct {
 	ID       primitive.ObjectID `bson:"_id"`
-	Mail     string             `bson:"mail"`
-	Username string             `bson:"username"`
-	Password string             `bson:"password"`
+	Mail     string             `bson:"mail,omitempty"`
+	Username string             `bson:"username,omitempty"`
+	Password string             `bson:"password,omitempty"`
 	// CreateTime is time of signing up
 	CreateTime int64 `bson:"create_time"`
 	// Favorite card sets of user
-	Favorite []primitive.ObjectID `bson:"favorite"`
+	Favorite []primitive.ObjectID `bson:"favorite,omitempty"`
 	// Avatar image url
-	Avatar string `bson:"avatar"`
+	Avatar string `bson:"avatar,omitempty"`
 }
 
 func (m *model) userC() *mongo.Collection {
@@ -39,8 +38,8 @@ func (m *model) userC() *mongo.Collection {
 
 // AddUser inserts a new user into database and will return `ErrExist`
 // when user with same mail exist in database
-func (m *model) AddUser(user User) (primitive.ObjectID, error) {
-	res := primitive.ObjectID{}
+func (m *model) AddUser(user User) (string, error) {
+	var res = ""
 	user.ID = primitive.NewObjectID()
 	// set init value, otherwise $addToSet will have problems
 	user.Favorite = []primitive.ObjectID{}
@@ -63,13 +62,14 @@ func (m *model) AddUser(user User) (primitive.ObjectID, error) {
 	if result.UpsertedCount != 1 {
 		return res, ErrExist
 	}
-	return user.ID, err
+	return user.ID.Hex(), err
 }
 
-// GetUser by id
-func (m *model) GetUser(id primitive.ObjectID) (User, bool, error) {
+// GetUser by id, returns the user struct, whether the user exist and error
+func (m *model) GetUser(id string) (User, bool, error) {
 	user := User{}
-	err := m.userC().FindOne(m.ctx, bson.M{"_id": id}).Decode(&user)
+	userID, err := primitive.ObjectIDFromHex(id)
+	err = m.userC().FindOne(m.ctx, bson.M{"_id": userID}).Decode(&user)
 	if err == mongo.ErrNoDocuments {
 		return user, false, nil
 	}
@@ -79,8 +79,15 @@ func (m *model) GetUser(id primitive.ObjectID) (User, bool, error) {
 	return user, true, err
 }
 
+// GetUserByMail will get user by mail
 func (m *model) GetUserByMail(mail string) (user User, err error) {
 	filter := bson.D{{"mail", mail}}
 	err = m.userC().FindOne(m.ctx, filter).Decode(&user)
 	return user, err
+}
+
+// UpdateUser updates user info in database, empty fields will be ignore
+func (m *model) UpdateUser(user User) error {
+	_, err := m.userC().UpdateOne(m.ctx, bson.M{"_id": user.ID}, bson.M{"$set": user})
+	return err
 }

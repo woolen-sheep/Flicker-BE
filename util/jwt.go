@@ -8,11 +8,10 @@ import (
 )
 
 const (
-	// jwt的过期时间，默认设置为7天
 	jwtExpiresDuration = time.Hour * 24 * 7
 )
 
-// JWTClaims 使用的JWT结构，JWT的修改请直接修改结构中的字段
+// JWTClaims with custom fields
 type JWTClaims struct {
 	jwt.StandardClaims
 	ID       string `json:"id"`
@@ -20,7 +19,7 @@ type JWTClaims struct {
 	Username string `json:"username"`
 }
 
-// GenerateJWTToken 根据键值对生成jwt token
+// GenerateJWTToken by claims
 func GenerateJWTToken(claims JWTClaims) (string, error) {
 	claims.ExpiresAt = time.Now().Add(jwtExpiresDuration).Unix()
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

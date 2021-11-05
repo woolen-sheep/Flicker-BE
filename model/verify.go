@@ -15,6 +15,8 @@ func blockPrefix(p string) string {
 	return fmt.Sprintf("Blocking:%s", p)
 }
 
+// VerifyCodeBlocking will check the duration after last mail
+// and return true if the duration is too short.
 func (m *model) VerifyCodeBlocking(mail string) (bool, error) {
 	n, err := redisClient.Exists(blockPrefix(mail)).Result()
 	return n != 0, err
