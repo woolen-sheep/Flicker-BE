@@ -33,6 +33,7 @@ Flicker是一个基于 Web 平台的知识分享、学习与记忆平台，且�
 ```bash
 git clone https://github.com/woolen-sheep/Flicker-BE.git
 cd Flicker-BE
+go build -o app
 sudo docker-compose up --build
 ```
 
