@@ -25,7 +25,7 @@ func getLogger() *logrus.Logger {
 	logger.Formatter = new(logrus.JSONFormatter)
 	logger.SetReportCaller(true)
 
-	if config.C.Debug == true {
+	if config.C.Debug {
 		logger.SetLevel(logrus.DebugLevel)
 	}
 

@@ -96,4 +96,5 @@ func (m *model) Close() {
 
 func (m *model) Abort() {
 	m.abort = true
+	m.cancel()
 }

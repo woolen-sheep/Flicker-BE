@@ -16,7 +16,7 @@ steps:
       - name: linter-cache
         path: /tmp/linter-cache
     commands:
-      - golangci-lint run --timeout=10m
+      - golangci-lint run --timeout=10m -D deadcode -D unused -v
 
   - name: go build
     image: golang:1.17.2

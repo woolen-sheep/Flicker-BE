@@ -22,12 +22,13 @@ type Model interface {
 
 type model struct {
 	dbTrait
-	ctx   context.Context
-	abort bool
+	ctx    context.Context
+	abort  bool
+	cancel context.CancelFunc
 }
 
 func GetModel() Model {
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	if config.C.Debug {
 		ctx = context.Background()
 	}
@@ -36,6 +37,7 @@ func GetModel() Model {
 		dbTrait: getDBTx(ctx),
 		ctx:     ctx,
 		abort:   false,
+		cancel:  cancel,
 	}
 
 	return ret
