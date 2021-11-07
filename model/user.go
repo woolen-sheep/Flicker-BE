@@ -69,6 +69,9 @@ func (m *model) AddUser(user User) (string, error) {
 func (m *model) GetUser(id string) (User, bool, error) {
 	user := User{}
 	userID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return user, false, err
+	}
 	err = m.userC().FindOne(m.ctx, bson.M{"_id": userID}).Decode(&user)
 	if err == mongo.ErrNoDocuments {
 		return user, false, nil
@@ -81,7 +84,7 @@ func (m *model) GetUser(id string) (User, bool, error) {
 
 // GetUserByMail will get user by mail
 func (m *model) GetUserByMail(mail string) (user User, err error) {
-	filter := bson.D{{"mail", mail}}
+	filter := bson.M{"mail": mail}
 	err = m.userC().FindOne(m.ctx, filter).Decode(&user)
 	return user, err
 }

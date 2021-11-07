@@ -1,0 +1,77 @@
+kind: pipeline
+type: docker
+name: golang-build
+
+steps:
+  - name: linter
+    image: golangci/golangci-lint:v1.42.1
+    environment:
+      GO111MODULE: on
+      GOPROXY: https://goproxy.cn,direct
+      GOPATH: /tmp/gopath
+      GOLANGCI_LINT_CACHE: /tmp/linter-cache
+    volumes:
+      - name: gopath
+        path: /tmp/gopath
+      - name: linter-cache
+        path: /tmp/linter-cache
+    commands:
+      - golangci-lint run --timeout=10m -D deadcode -D unused -v
+
+  - name: go build
+    image: golang:1.17.2
+    environment:
+      GO111MODULE: on
+      CGO_ENABLED: 0
+      GOPROXY: https://goproxy.cn,direct
+      GOPRIVATE: git.bingyan.net
+      GOPATH: /tmp/gopath
+    volumes:
+      - name: gopath
+        path: /tmp/gopath
+    commands:
+      - go test ./...
+      - go build -o ./app
+      - chmod +x ./app
+
+  - name: scp_files
+    image: appleboy/drone-scp
+    when:
+      event:
+        - push
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_user
+      key:
+        from_secret: ssh_key
+      port: 22
+      target: /home/drone/projects/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
+      source: ./
+
+  - name: deploy
+    image: appleboy/drone-ssh
+    when:
+      event:
+        - push
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_user
+      key:
+        from_secret: ssh_key
+      port: 22
+      script:
+        - cd /home/drone/projects/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
+        - docker-compose down
+        - docker-compose up -d
+
+volumes:
+  - name: gopath
+    host:
+      path: /tmp/.gopath
+  - name: linter-cache
+    host:
+      path: /tmp/.linter-cache
