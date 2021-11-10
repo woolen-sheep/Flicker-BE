@@ -101,12 +101,17 @@ func GetCardset(c echo.Context) error {
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when GetCardset", err)
 	}
+
+	var cardsIDs []string
+	for _, card := range cardset.Cards {
+		cardsIDs = append(cardsIDs, card.Hex())
+	}
 	resp := param.GetCardsetResponse{
 		ID:          cardsetID,
 		Name:        cardset.Name,
 		Description: cardset.Description,
 		Access:      cardset.Access,
-		Cards:       cardset.Cards,
+		Cards:       cardsIDs,
 	}
 	return context.Success(c, resp)
 }

@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const colNameCardset = "cardset"
@@ -20,11 +19,11 @@ type CardsetInterface interface {
 
 // Cardset struct in model layer
 type Cardset struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	Name        string             `bson:"name,omitempty"`
-	Description string             `bson:"description,omitempty"`
-	Access      int                `bson:"access,omitempty"`
-	Cards       []string           `bson:"cards,omitempty"`
+	ID          primitive.ObjectID   `bson:"_id"`
+	Name        string               `bson:"name,omitempty"`
+	Description string               `bson:"description,omitempty"`
+	Access      int                  `bson:"access,omitempty"`
+	Cards       []primitive.ObjectID `bson:"cards,omitempty"`
 
 	// CreateTime is the first time of adding the cardset
 	CreateTime int64 `bson:"create_time"`
@@ -36,32 +35,18 @@ func (m *model) cardsetC() *mongo.Collection {
 	return m.db.Collection(colNameCardset)
 }
 
-// AddCardset inserts a new cardset into database and will return `ErrExist`
-// when cardset with same mail exist in database
+// AddCardset inserts a new cardset into database
 func (m *model) AddCardset(cardset Cardset) (string, error) {
-	var res = ""
 	cardset.ID = primitive.NewObjectID()
+	cardset.Cards = make([]primitive.ObjectID, 0)
+
 	cardset.CreateTime = time.Now().Unix()
 	cardset.LastUpdateTime = cardset.CreateTime
 
-	filter := bson.M{
-		"name": cardset.Name,
+	if _, err := m.cardsetC().InsertOne(m.ctx, &cardset); err != nil {
+		return "", err
 	}
-	update := bson.M{
-		"$setOnInsert": cardset,
-	}
-	boolTrue := true
-	opt := options.UpdateOptions{
-		Upsert: &boolTrue,
-	}
-	result, err := m.cardsetC().UpdateOne(m.ctx, filter, update, &opt)
-	if err != nil {
-		return res, err
-	}
-	if result.UpsertedCount != 1 {
-		return res, ErrExist
-	}
-	return cardset.ID.Hex(), err
+	return cardset.ID.Hex(), nil
 }
 
 // UpdateCardset updates cardset info in database, empty fields will be ignore
