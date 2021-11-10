@@ -230,8 +230,7 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：字符串，必需，卡片id
-
+- id：字符串，必需，卡片集id
 - name：字符串，可选，名称
     - 参数留空时表示不做修改，下同
 - description：字符串，可选，卡片集描述
@@ -265,7 +264,7 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：字符串，必需，卡片id
+- id：字符串，必需，卡片集id
 
 #### 响应参数
 
@@ -281,7 +280,7 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：字符串，必需，卡片id
+- id：字符串，必需，卡片集id
 
 #### 响应参数
 

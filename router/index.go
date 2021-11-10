@@ -8,8 +8,10 @@ import (
 // InitRouter will initialize all routers
 func InitRouter(g *echo.Group) {
 	initIndexRouter(g)
-	grp := g.Group("/user")
-	initUserRouter(grp)
+	usrGrp := g.Group("/user")
+	initUserRouter(usrGrp)
+	cardsetGrp := g.Group("/cardset")
+	initCardsetRouter(cardsetGrp)
 }
 
 func initIndexRouter(g *echo.Group) {

@@ -18,6 +18,8 @@ type Model interface {
 	GetVerifyCode(mail string) (string, error)
 	// UserInterface contains all user functions in model layer
 	UserInterface
+	// CardsetInterface contains all cardset functions in model layer
+	CardsetInterface
 }
 
 type model struct {
