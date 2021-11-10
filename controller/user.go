@@ -79,7 +79,7 @@ func UpdateUser(c echo.Context) error {
 		return context.Error(c, http.StatusNotFound, "user not found", nil)
 	}
 	if err != nil {
-		return context.Error(c, http.StatusInternalServerError, "error when get user", err)
+		return context.Error(c, http.StatusInternalServerError, "error when GetUser", err)
 	}
 
 	var cipher string
