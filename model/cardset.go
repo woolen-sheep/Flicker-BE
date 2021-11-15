@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/woolen-sheep/Flicker-BE/constant"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,17 +14,18 @@ const colNameCardset = "cardset"
 type CardsetInterface interface {
 	AddCardset(cardset Cardset) (string, error)
 	GetCardset(id string) (Cardset, bool, error)
-	DeleteCardset(id string) (bool, error)
+	DeleteCardset(cardset Cardset) (bool, error)
 	UpdateCardset(cardset Cardset) error
 }
 
 // Cardset struct in model layer
 type Cardset struct {
 	ID          primitive.ObjectID `bson:"_id"`
-	OwnerID     primitive.ObjectID `bson:"owner_id"`
+	OwnerID     primitive.ObjectID `bson:"owner_id,omitempty"`
 	Name        string             `bson:"name,omitempty"`
 	Description string             `bson:"description,omitempty"`
 	Access      int                `bson:"access,omitempty"`
+	Status      int                `bson:"status,omitempty"`
 
 	// CreateTime is the first time of adding the cardset
 	CreateTime int64 `bson:"create_time"`
@@ -54,6 +56,7 @@ func (m *model) UpdateCardset(cardset Cardset) error {
 	filter := bson.M{
 		"_id":      cardset.ID,
 		"owner_id": cardset.OwnerID,
+		"status":   constant.StatusNormal,
 	}
 	res, err := m.cardsetC().UpdateOne(m.ctx, filter, bson.M{"$set": cardset})
 	if err != nil {
@@ -66,13 +69,9 @@ func (m *model) UpdateCardset(cardset Cardset) error {
 }
 
 // DeleteCardset by id, returns the cardset exist and error
-func (m *model) DeleteCardset(id string) (bool, error) {
-	cardsetID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return false, err
-	}
-	res, err := m.cardsetC().DeleteOne(m.ctx, bson.M{"_id": cardsetID})
-	if res.DeletedCount == 0 {
+func (m *model) DeleteCardset(cardset Cardset) (bool, error) {
+	err := m.UpdateCardset(cardset)
+	if err == ErrNotFound {
 		return false, nil
 	}
 	if err != nil {
@@ -88,7 +87,11 @@ func (m *model) GetCardset(id string) (Cardset, bool, error) {
 	if err != nil {
 		return cardset, false, err
 	}
-	err = m.cardsetC().FindOne(m.ctx, bson.M{"_id": cardsetID}).Decode(&cardset)
+	filter := bson.M{
+		"_id":    cardsetID,
+		"status": constant.StatusNormal,
+	}
+	err = m.cardsetC().FindOne(m.ctx, filter).Decode(&cardset)
 	if err == mongo.ErrNoDocuments {
 		return cardset, false, nil
 	}

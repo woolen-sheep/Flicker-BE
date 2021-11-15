@@ -36,6 +36,7 @@ func NewCardset(c echo.Context) error {
 		Name:        p.Name,
 		Description: p.Description,
 		Access:      p.Access,
+		Status:      constant.StatusNormal,
 	}
 	cardsetID, err := m.AddCardset(cardset)
 	if err != nil {
@@ -55,7 +56,7 @@ func UpdateCardset(c echo.Context) error {
 	m := model.GetModel()
 	defer m.Close()
 
-	cardID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	cardsetID, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
 		return context.Error(c, http.StatusBadRequest, "bad request", err)
 	}
@@ -67,7 +68,7 @@ func UpdateCardset(c echo.Context) error {
 
 	cardset := model.Cardset{
 		OwnerID:     userID,
-		ID:          cardID,
+		ID:          cardsetID,
 		Name:        p.Name,
 		Description: p.Description,
 		Access:      p.Access,
@@ -85,12 +86,26 @@ func UpdateCardset(c echo.Context) error {
 
 // DeleteCardset will accept cardset ID and delete the exact cardset.
 func DeleteCardset(c echo.Context) error {
-	cardsetID := c.Param("id")
+	cardsetID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	userID, err := primitive.ObjectIDFromHex(context.GetJWTUserID(c))
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
 
 	m := model.GetModel()
 	defer m.Close()
 
-	exist, err := m.DeleteCardset(cardsetID)
+	cardset := model.Cardset{
+		ID:      cardsetID,
+		OwnerID: userID,
+		Status:  constant.StatusDeleted,
+	}
+
+	exist, err := m.DeleteCardset(cardset)
 	if !exist {
 		return context.Error(c, http.StatusNotFound, "cardset not found", nil)
 	}
