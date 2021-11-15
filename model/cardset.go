@@ -19,11 +19,11 @@ type CardsetInterface interface {
 
 // Cardset struct in model layer
 type Cardset struct {
-	ID          primitive.ObjectID   `bson:"_id"`
-	Name        string               `bson:"name,omitempty"`
-	Description string               `bson:"description,omitempty"`
-	Access      int                  `bson:"access,omitempty"`
-	Cards       []primitive.ObjectID `bson:"cards,omitempty"`
+	ID          primitive.ObjectID `bson:"_id"`
+	OwnerID     primitive.ObjectID `bson:"owner_id"`
+	Name        string             `bson:"name,omitempty"`
+	Description string             `bson:"description,omitempty"`
+	Access      int                `bson:"access,omitempty"`
 
 	// CreateTime is the first time of adding the cardset
 	CreateTime int64 `bson:"create_time"`
@@ -38,7 +38,6 @@ func (m *model) cardsetC() *mongo.Collection {
 // AddCardset inserts a new cardset into database
 func (m *model) AddCardset(cardset Cardset) (string, error) {
 	cardset.ID = primitive.NewObjectID()
-	cardset.Cards = make([]primitive.ObjectID, 0)
 
 	cardset.CreateTime = time.Now().Unix()
 	cardset.LastUpdateTime = cardset.CreateTime
@@ -52,8 +51,18 @@ func (m *model) AddCardset(cardset Cardset) (string, error) {
 // UpdateCardset updates cardset info in database, empty fields will be ignore
 func (m *model) UpdateCardset(cardset Cardset) error {
 	cardset.LastUpdateTime = time.Now().Unix()
-	_, err := m.cardsetC().UpdateOne(m.ctx, bson.M{"_id": cardset.ID}, bson.M{"$set": cardset})
-	return err
+	filter := bson.M{
+		"_id":      cardset.ID,
+		"owner_id": cardset.OwnerID,
+	}
+	res, err := m.cardsetC().UpdateOne(m.ctx, filter, bson.M{"$set": cardset})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return ErrNotFound
+	}
+	return nil
 }
 
 // DeleteCardset by id, returns the cardset exist and error
