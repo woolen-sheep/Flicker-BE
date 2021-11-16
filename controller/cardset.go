@@ -147,3 +147,13 @@ func GetCardset(c echo.Context) error {
 	}
 	return context.Success(c, resp)
 }
+
+func isCardsetOwner(cardset, owner string) bool {
+	m := model.GetModel()
+	defer m.Close()
+	_, err := m.GetCardsetWithOwner(cardset, owner)
+	if err != nil {
+		return false
+	}
+	return true
+}

@@ -16,6 +16,7 @@ type CardsetInterface interface {
 	GetCardset(id string) (Cardset, bool, error)
 	DeleteCardset(cardset Cardset) (bool, error)
 	UpdateCardset(cardset Cardset) error
+	GetCardsetWithOwner(id, owner string) (Cardset, error)
 }
 
 // Cardset struct in model layer
@@ -99,4 +100,27 @@ func (m *model) GetCardset(id string) (Cardset, bool, error) {
 		return cardset, false, err
 	}
 	return cardset, true, err
+}
+
+// GetCardsetWithOwner by id and owner id, returns the cardset struct, whether the cardset exist and error
+func (m *model) GetCardsetWithOwner(id, owner string) (Cardset, error) {
+	cardset := Cardset{}
+	cardsetID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return cardset, err
+	}
+	ownerID, err := primitive.ObjectIDFromHex(owner)
+	if err != nil {
+		return cardset, err
+	}
+	filter := bson.M{
+		"_id":      cardsetID,
+		"owner_id": ownerID,
+		"status":   constant.StatusNormal,
+	}
+	err = m.cardsetC().FindOne(m.ctx, filter).Decode(&cardset)
+	if err == mongo.ErrNoDocuments {
+		return cardset, nil
+	}
+	return cardset, err
 }

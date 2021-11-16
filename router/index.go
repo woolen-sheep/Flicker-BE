@@ -12,6 +12,8 @@ func InitRouter(g *echo.Group) {
 	initUserRouter(usrGrp)
 	cardsetGrp := g.Group("/cardset")
 	initCardsetRouter(cardsetGrp)
+	cardGrp := g.Group("/cardset/:cardset_id/card")
+	initCardRouter(cardGrp)
 }
 
 func initIndexRouter(g *echo.Group) {

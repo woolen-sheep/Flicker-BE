@@ -20,6 +20,8 @@ type Model interface {
 	UserInterface
 	// CardsetInterface contains all cardset functions in model layer
 	CardsetInterface
+	// CardInterface contains all card functions in model layer
+	CardInterface
 }
 
 type model struct {
