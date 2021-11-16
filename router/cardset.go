@@ -6,7 +6,7 @@ import (
 )
 
 func initCardsetRouter(g *echo.Group) {
-	g.POST("/", controller.NewCardset)
+	g.POST("", controller.NewCardset)
 	g.PUT("/:id", controller.UpdateCardset)
 	g.DELETE("/:id", controller.DeleteCardset)
 	g.GET("/:id", controller.GetCardset)
