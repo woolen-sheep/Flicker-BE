@@ -19,4 +19,5 @@ func InitRouter(g *echo.Group) {
 func initIndexRouter(g *echo.Group) {
 	g.POST("/verify", controller.SendVerifyCode)
 	g.POST("/login", controller.Login)
+	g.POST("/signup", controller.SignUp)
 }
