@@ -9,5 +9,5 @@ func initUserRouter(g *echo.Group) {
 	g.POST("", controller.SignUp)
 	g.PUT("", controller.UpdateUser)
 	g.GET("/:user_id", controller.GetUser)
-	g.GET("/", controller.GetUser)
+	g.GET("", controller.GetUser)
 }
