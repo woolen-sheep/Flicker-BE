@@ -74,35 +74,7 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-### POST /login 登录
-
-#### 请求参数
-
-- mail：字符串，必需，邮件地址
-- password：字符串，必需，密码
-
-#### 请求示例
-
-```json
-{
-    "mail":"123456789@qq.com",
-    "password":"xxx"
-}
-```
-
-#### 响应参数
-
-字符串，JWT Token
-
-#### 响应示例
-
-```json
-"jwt"
-```
-
-## 用户 /user
-
-### POST / 新建用户
+### POST /signup 新建用户
 
 #### 请求参数
 
@@ -131,6 +103,34 @@ Authorization: Bearer 一个巨长的token
 ```json
 "ok"
 ```
+
+### POST /login 登录
+
+#### 请求参数
+
+- mail：字符串，必需，邮件地址
+- password：字符串，必需，密码
+
+#### 请求示例
+
+```json
+{
+    "mail":"123456789@qq.com",
+    "password":"xxx"
+}
+```
+
+#### 响应参数
+
+字符串，JWT Token
+
+#### 响应示例
+
+```json
+"jwt"
+```
+
+## 用户 /user
 
 ### PUT / 修改用户
 
