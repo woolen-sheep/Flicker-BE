@@ -124,6 +124,7 @@ func GetUser(c echo.Context) error {
 		return context.Error(c, http.StatusInternalServerError, "error when GetUser", err)
 	}
 	resp := param.UserResponse{
+		ID:       user.ID.Hex(),
 		Username: user.Username,
 		Avatar:   user.Avatar,
 	}
