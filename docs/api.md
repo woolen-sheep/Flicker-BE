@@ -472,6 +472,31 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
+## 服务 /service
+
+### GET /upload_token 获取七牛上传凭证
+
+#### 请求参数
+
+- type：字符串，必需，文件类型
+  - 值为`avatar`,`image`,`audio`之一
+
+#### 响应参数
+
+- url：字符串，文件url
+- resource_key：字符串，资源键
+- token：字符串，七牛上传凭证
+
+#### 响应示例
+
+```json
+{
+    "url": "https://flicker-static.hust.online/avatar/4aac8aa5-7965-4833-be01-b8d9ab7a6f56",
+    "resource_key": "avatar/4aac8aa5-7965-4833-be01-b8d9ab7a6f56",
+    "token": "_vgfaQkb3E3MjAE0k9aDcOmezkbXBcFX4bqA2WSS:bV9mvzzIvMGxGqxPqqAm_0Mx6kE=:eyJzY29wZSI6ImZsaWNrZXI6YXZhdGFyLzRhYWM4YWE1LTc5NjUtNDgzMy1iZTAxLWI4ZDlhYjdhNmY1NiIsImRlYWRsaW5lIjoxNjM3NDMzNzUyfQ=="
+}
+```
+
 ### tmp
 
 #### 请求参数
