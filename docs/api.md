@@ -429,7 +429,7 @@ Authorization: Bearer 一个巨长的token
 #### 响应示例
 
 ```json
-"ok"
+"id"
 ```
 
 ### GET /:id/comment 获取评论列表
@@ -440,18 +440,29 @@ Authorization: Bearer 一个巨长的token
 
 #### 响应参数
 
-评论数组
+数组，每个元素包含**发表评论的用户**和**评论内容**
 
 #### 响应示例
 
 ```json
 [
     {
-    	"comment":"comment"
-	},
+        "owner": {
+            "id": "id",
+            "username": "xxx",
+            "avatar": "https://example.com/a.jpg",
+        },
+        "comment":"comment",
+
+    },
     {
-    	"comment":"comment"
-	}
+        "owner": {
+            "id": "id",
+            "username": "xxx",
+            "avatar": "https://example.com/a.jpg",
+        },
+        "comment":"comment",
+    }
 ]
 ```
 
