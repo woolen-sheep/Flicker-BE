@@ -29,6 +29,9 @@ func NewComment(c echo.Context) error {
 	}
 
 	cardID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
 
 	m := model.GetModel()
 	defer m.Close()
@@ -63,11 +66,11 @@ func GetComments(c echo.Context) error {
 	}
 
 	comments, commentExist, err := m.GetComments(cardID)
-	if !commentExist {
-		// something to log
-	}
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when GetComments", err)
+	}
+	if !commentExist {
+		return context.Success(c, make(param.GetCommentResponse, 0))
 	}
 
 	var resp param.GetCommentResponse

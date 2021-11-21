@@ -56,9 +56,7 @@ func (m *model) GetComments(cardID string) ([]Comment, bool, error) {
 	var comments []Comment
 	cardObjectID, err := primitive.ObjectIDFromHex(cardID)
 	if err != nil {
-		// error in card ID convertion, set `exist` true to avoid non-positive error
-		// in controller caller
-		return comments, true, err
+		return comments, false, err // error in ObjectIDFromHex
 	}
 
 	filter := bson.M{
