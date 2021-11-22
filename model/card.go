@@ -14,6 +14,7 @@ const colNameCard = "card"
 type CardInterface interface {
 	AddCard(card Card) (string, error)
 	GetCard(id string) (Card, bool, error)
+	GetCardByIDList(ids []primitive.ObjectID) ([]Card, error)
 	GetCardInCardset(cardset string) ([]Card, error)
 	DeleteCard(card Card) (bool, error)
 	UpdateCard(card Card) error
@@ -95,6 +96,26 @@ func (m *model) GetCard(id string) (Card, bool, error) {
 		return card, false, err
 	}
 	return card, true, err
+}
+
+// GetCardByIDList by id, returns the card struct, whether the card exist and error
+func (m *model) GetCardByIDList(ids []primitive.ObjectID) ([]Card, error) {
+	card := []Card{}
+	filter := bson.M{
+		"_id": bson.M{
+			"$in": ids,
+		},
+		"status": constant.StatusNormal,
+	}
+	res, err := m.cardC().Find(m.ctx, filter)
+	if err == mongo.ErrNoDocuments {
+		return card, nil
+	}
+	if err != nil {
+		return card, err
+	}
+	err = res.All(m.ctx, &card)
+	return card, err
 }
 
 // GetCardInCardset returns the card struct, whether the card exist and error
