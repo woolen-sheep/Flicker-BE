@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -156,10 +157,57 @@ func GetCard(c echo.Context) error {
 	}
 
 	resp := param.GetCardResponse{
+		ID:       card.ID.Hex(),
 		Question: card.Question,
 		Answer:   card.Answer,
 		Image:    card.Image,
 		Audio:    card.Audio,
 	}
+	return context.Success(c, resp)
+}
+
+// GetCards will accept a card ID list and return a card info list.
+func GetCards(c echo.Context) error {
+	cardIDHexes := []string{}
+	err := json.Unmarshal([]byte(c.QueryParam("ids")), &cardIDHexes)
+	if err != nil || len(cardIDHexes) == 0 {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+	cardsetID := c.Param("cardset_id")
+
+	userID := context.GetJWTUserID(c)
+
+	if !isCardsetOwner(cardsetID, userID) {
+		return context.Error(c, http.StatusForbidden, "permission denied", nil)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+	cardIDs := []primitive.ObjectID{}
+	for _, hex := range cardIDHexes {
+		id, err := primitive.ObjectIDFromHex(hex)
+		if err != nil {
+			return context.Error(c, http.StatusBadRequest, "bad request", err)
+		}
+		cardIDs = append(cardIDs, id)
+	}
+	cards, err := m.GetCardByIDList(cardIDs)
+	if err == model.ErrNotFound {
+		return context.Error(c, http.StatusNotFound, "card not found", nil)
+	}
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetCard", err)
+	}
+	resp := []param.GetCardResponse{}
+	for _, card := range cards {
+		resp = append(resp, param.GetCardResponse{
+			ID:       card.ID.Hex(),
+			Question: card.Question,
+			Answer:   card.Answer,
+			Image:    card.Image,
+			Audio:    card.Audio,
+		})
+	}
+
 	return context.Success(c, resp)
 }

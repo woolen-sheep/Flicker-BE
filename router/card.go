@@ -11,6 +11,7 @@ func initCardRouter(g *echo.Group) {
 	g.PUT("/:id", controller.UpdateCard)
 	g.DELETE("/:id", controller.DeleteCard)
 	g.GET("/:id", controller.GetCard)
+	g.GET("", controller.GetCards)
 
 	// Comment on card APIs
 	g.POST("/:id/comment", controller.NewComment)

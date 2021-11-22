@@ -15,6 +15,7 @@ type UpdateCardRequest struct {
 }
 
 type GetCardResponse struct {
+	ID       string `json:"id"`
 	Question string `json:"question"`
 	Answer   string `json:"answer"`
 	Image    string `json:"image"`
