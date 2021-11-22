@@ -1,10 +1,10 @@
-Flicker-API文档
+Flicker-API 文档
 
 ## 基本格式
 
 地址: 暂定
 
-API前缀: /api/v1，**文档中省略前缀**
+API 前缀: /api/v1，**文档中省略前缀**
 
 ### 数据交换格式
 
@@ -12,45 +12,45 @@ API前缀: /api/v1，**文档中省略前缀**
 
 ```json
 {
-    "success": true,
-    "message": "",
-    "data": {}
+  "success": true,
+  "message": "",
+  "data": {}
 }
 ```
 
-data 可以为任何类型，***之后文档中只写出data的数据***
+data 可以为任何类型，**_之后文档中只写出 data 的数据_**
 
 #### 失败
 
 ```json
 {
-    "success": false,
-    "message": "错误提示信息",
-    "error": "错误显示信息",
-    "data": null
+  "success": false,
+  "message": "错误提示信息",
+  "error": "错误显示信息",
+  "data": null
 }
 ```
 
-失败会返回200以外的http状态码
+失败会返回 200 以外的 http 状态码
 
 **错误提示信息是供用户看的文字提示，出现错误时直接使用即可**
 
-之后API文档中不会再写失败回复。
+之后 API 文档中不会再写失败回复。
 
 ## 身份验证
 
-使用jwt进行身份验证，token位于http头的Authorization字段，以Bearer开头，例
+使用 jwt 进行身份验证，token 位于 http 头的 Authorization 字段，以 Bearer 开头，例
 
-Authorization: Bearer 一个巨长的token
+Authorization: Bearer 一个巨长的 token
 
 ## 基本 /
 
 ### POST /verify 发送邮件验证码
 
-- 无需jwt
+- 无需 jwt
 
-- 验证码请求间隔至少为1分钟
-- 验证码缓存有效期暂定15分钟
+- 验证码请求间隔至少为 1 分钟
+- 验证码缓存有效期暂定 15 分钟
 
 #### 请求参数
 
@@ -60,7 +60,7 @@ Authorization: Bearer 一个巨长的token
 
 ```json
 {
-    "mail":"12345678@qq.com"
+  "mail": "12345678@qq.com"
 }
 ```
 
@@ -87,10 +87,10 @@ Authorization: Bearer 一个巨长的token
 
 ```json
 {
-    "mail":"123456789@qq.com",
-    "username":"xxx",
-    "password":"xxx",
-    "code":"12345"
+  "mail": "123456789@qq.com",
+  "username": "xxx",
+  "password": "xxx",
+  "code": "12345"
 }
 ```
 
@@ -115,8 +115,8 @@ Authorization: Bearer 一个巨长的token
 
 ```json
 {
-    "mail":"123456789@qq.com",
-    "password":"xxx"
+  "mail": "123456789@qq.com",
+  "password": "xxx"
 }
 ```
 
@@ -141,16 +141,16 @@ Authorization: Bearer 一个巨长的token
 - username：字符串，可选，用户名
 - password：字符串，可选，密码
 - code：字符串，当`password`不为空时必需，邮件验证码
-- avatar：字符串，可选，头像url
-    - 这个之后再加，需要考虑一下要不要上七牛
+- avatar：字符串，可选，头像 url
+  - 这个之后再加，需要考虑一下要不要上七牛
 
 #### 请求示例
 
 ```json
 {
-    "username":"xxx",
-    "password":"xxx",
-    "code":"12345"
+  "username": "xxx",
+  "password": "xxx",
+  "code": "12345"
 }
 ```
 
@@ -164,29 +164,25 @@ Authorization: Bearer 一个巨长的token
 "ok"
 ```
 
-
-
 ### GET /:user_id 获取用户
 
 #### 请求参数
 
-- user_id：路径参数，用户id，缺省时获取当前登录用户信息
+- user_id：路径参数，用户 id，缺省时获取当前登录用户信息
 
 #### 响应参数
 
 - username：字符串，可选，用户名
-- avatar：字符串，可选，头像url
+- avatar：字符串，可选，头像 url
 
 #### 响应示例
 
 ```json
 {
-    "username":"xxx",
-    "avatar":"https://example.com/1.jpg"
+  "username": "xxx",
+  "avatar": "https://example.com/1.jpg"
 }
 ```
-
-
 
 ## 卡片集 /cardset
 
@@ -199,26 +195,26 @@ Authorization: Bearer 一个巨长的token
 - name：字符串，必需，名称
 - description：字符串，可选，卡片集描述
 - template：字符串，可选，模板
-    - 模板一定程度上规定了卡片的样式与布局
-    - 暂定为HTML格式，具体如何设计看前端
-    - 当此字段为空时应使用默认的样式
+  - 模板一定程度上规定了卡片的样式与布局
+  - 暂定为 HTML 格式，具体如何设计看前端
+  - 当此字段为空时应使用默认的样式
 - access：整数，可选，访问权限
-    - 0-仅创建者可见，1-所有人可见
-    - 默认权限为0
+  - 0-仅创建者可见，1-所有人可见
+  - 默认权限为 0
 
 #### 请求示例
 
 ```json
 {
-    "name":"test-cards",
-    "description":"test test.",
-    "access":1
+  "name": "test-cards",
+  "description": "test test.",
+  "access": 1
 }
 ```
 
 #### 响应参数
 
-字符串，卡片集id
+字符串，卡片集 id
 
 #### 响应示例
 
@@ -230,23 +226,23 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：字符串，必需，卡片集id
+- id：字符串，必需，卡片集 id
 - name：字符串，可选，名称
-    - 参数留空时表示不做修改，下同
+  - 参数留空时表示不做修改，下同
 - description：字符串，可选，卡片集描述
 - template：字符串，可选，模板
-    - 模板一定程度上规定了卡片的样式与布局
-    - 暂定为HTML格式，具体如何设计看前端
-    - 当此字段为空时应使用默认的样式
+  - 模板一定程度上规定了卡片的样式与布局
+  - 暂定为 HTML 格式，具体如何设计看前端
+  - 当此字段为空时应使用默认的样式
 - access：整数，可选，访问权限
 
 #### 请求示例
 
 ```json
 {
-    "name":"test-cards",
-    "description":"test test.",
-    "access":1
+  "name": "test-cards",
+  "description": "test test.",
+  "access": 1
 }
 ```
 
@@ -264,7 +260,7 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：字符串，必需，卡片集id
+- id：字符串，必需，卡片集 id
 
 #### 响应参数
 
@@ -280,30 +276,30 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：字符串，必需，卡片集id
+- id：字符串，必需，卡片集 id
 
 #### 响应参数
 
 - name：字符串，名称
 - description：字符串，卡片集描述
 - access：整数，访问权限
-- cards：字符串数组，卡片的id列表
+- cards：字符串数组，卡片的 id 列表
 
 #### 响应示例
 
 ```json
 {
-    "id":"id",
-    "name":"test-cards",
-    "description":"test test.",
-    "access":1,
-    "cards":[]
+  "id": "id",
+  "name": "test-cards",
+  "description": "test test.",
+  "access": 1,
+  "cards": []
 }
 ```
 
 ## 卡片 /cardset/:cardset_id/card
 
-- cardset_id：路径参数，必需，卡片集id
+- cardset_id：路径参数，必需，卡片集 id
 
 ### POST / 新建卡片
 
@@ -311,23 +307,23 @@ Authorization: Bearer 一个巨长的token
 
 - question：字符串，必需，题面
 - answer：字符串，必需，答案
-- image：字符串，可选，图片url
-- audio：字符串，可选，音频url
+- image：字符串，可选，图片 url
+- audio：字符串，可选，音频 url
 
 #### 请求示例
 
 ```json
 {
-    "question":"question",
-    "answer":"answer",
-    "image":"https://example.com/1.jpg",
-    "audio":"https://example.com/1.wav"
+  "question": "question",
+  "answer": "answer",
+  "image": "https://example.com/1.jpg",
+  "audio": "https://example.com/1.wav"
 }
 ```
 
 #### 响应参数
 
-卡片id
+卡片 id
 
 #### 响应示例
 
@@ -339,27 +335,27 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：路径参数，必需，卡片id
+- id：路径参数，必需，卡片 id
 
 - question：字符串，必需，题面
 - answer：字符串，必需，答案
-- image：字符串，可选，图片url
-- audio：字符串，可选，音频url
+- image：字符串，可选，图片 url
+- audio：字符串，可选，音频 url
 
 #### 请求示例
 
 ```json
 {
-    "question":"question",
-    "answer":"answer",
-    "image":"https://example.com/1.jpg",
-    "audio":"https://example.com/1.wav"
+  "question": "question",
+  "answer": "answer",
+  "image": "https://example.com/1.jpg",
+  "audio": "https://example.com/1.wav"
 }
 ```
 
 #### 响应参数
 
-卡片id
+卡片 id
 
 #### 响应示例
 
@@ -371,23 +367,23 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：路径参数，必需，卡片id
+- id：路径参数，必需，卡片 id
 
 #### 响应参数
 
 - question：字符串，题面
 - answer：字符串，答案
-- image：字符串，图片url
-- audio：字符串，音频url
+- image：字符串，图片 url
+- audio：字符串，音频 url
 
 #### 响应示例
 
 ```json
 {
-    "question":"question",
-    "answer":"answer",
-    "image":"https://example.com/1.jpg",
-    "audio":"https://example.com/1.wav"
+  "question": "question",
+  "answer": "answer",
+  "image": "https://example.com/1.jpg",
+  "audio": "https://example.com/1.wav"
 }
 ```
 
@@ -395,7 +391,7 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：路径参数，必需，卡片id
+- id：路径参数，必需，卡片 id
 
 #### 响应参数
 
@@ -411,20 +407,20 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：路径参数，必需，卡片id
+- id：路径参数，必需，卡片 id
 - comment：字符串，必需，评论内容
 
 #### 请求示例
 
 ```json
 {
-    "comment":"comment"
+  "comment": "comment"
 }
 ```
 
 #### 响应参数
 
-评论id
+评论 id
 
 #### 响应示例
 
@@ -436,33 +432,34 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：路径参数，必需，卡片id
+- id：路径参数，必需，卡片 id
 
 #### 响应参数
 
-数组，每个元素包含**发表评论的用户**和**评论内容**
+数组，每个元素包含**该条评论的 ID**, **发表评论的用户**和**评论内容**
 
 #### 响应示例
 
 ```json
 [
-    {
-        "owner": {
-            "id": "id",
-            "username": "xxx",
-            "avatar": "https://example.com/a.jpg",
-        },
-        "comment":"comment",
-
+  {
+    "id": "id",
+    "owner": {
+      "id": "id",
+      "username": "xxx",
+      "avatar": "https://example.com/a.jpg"
     },
-    {
-        "owner": {
-            "id": "id",
-            "username": "xxx",
-            "avatar": "https://example.com/a.jpg",
-        },
-        "comment":"comment",
-    }
+    "comment": "comment"
+  },
+  {
+    "id": "id",
+    "owner": {
+      "id": "id",
+      "username": "xxx",
+      "avatar": "https://example.com/a.jpg"
+    },
+    "comment": "comment"
+  }
 ]
 ```
 
@@ -470,8 +467,8 @@ Authorization: Bearer 一个巨长的token
 
 #### 请求参数
 
-- id：路径参数，必需，卡片id
-- comment_id：路径参数，必需，评论id
+- id：路径参数，必需，卡片 id
+- comment_id：路径参数，必需，评论 id
 
 #### 响应参数
 
@@ -494,7 +491,7 @@ Authorization: Bearer 一个巨长的token
 
 #### 响应参数
 
-- url：字符串，文件url
+- url：字符串，文件 url
 - resource_key：字符串，资源键
 - token：字符串，七牛上传凭证
 
@@ -502,9 +499,9 @@ Authorization: Bearer 一个巨长的token
 
 ```json
 {
-    "url": "https://flicker-static.hust.online/avatar/4aac8aa5-7965-4833-be01-b8d9ab7a6f56",
-    "resource_key": "avatar/4aac8aa5-7965-4833-be01-b8d9ab7a6f56",
-    "token": "_vgfaQkb3E3MjAE0k9aDcOmezkbXBcFX4bqA2WSS:bV9mvzzIvMGxGqxPqqAm_0Mx6kE=:eyJzY29wZSI6ImZsaWNrZXI6YXZhdGFyLzRhYWM4YWE1LTc5NjUtNDgzMy1iZTAxLWI4ZDlhYjdhNmY1NiIsImRlYWRsaW5lIjoxNjM3NDMzNzUyfQ=="
+  "url": "https://flicker-static.hust.online/avatar/4aac8aa5-7965-4833-be01-b8d9ab7a6f56",
+  "resource_key": "avatar/4aac8aa5-7965-4833-be01-b8d9ab7a6f56",
+  "token": "_vgfaQkb3E3MjAE0k9aDcOmezkbXBcFX4bqA2WSS:bV9mvzzIvMGxGqxPqqAm_0Mx6kE=:eyJzY29wZSI6ImZsaWNrZXI6YXZhdGFyLzRhYWM4YWE1LTc5NjUtNDgzMy1iZTAxLWI4ZDlhYjdhNmY1NiIsImRlYWRsaW5lIjoxNjM3NDMzNzUyfQ=="
 }
 ```
 
@@ -525,4 +522,3 @@ Authorization: Bearer 一个巨长的token
 ```json
 
 ```
-

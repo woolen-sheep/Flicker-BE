@@ -23,14 +23,22 @@ func NewComment(c echo.Context) error {
 		return context.Error(c, http.StatusBadRequest, "bad request", err)
 	}
 
-	userID, err := primitive.ObjectIDFromHex(context.GetJWTUserID(c))
+	cardIDHex := c.Param("id")
+	cardID, err := primitive.ObjectIDFromHex(cardIDHex)
 	if err != nil {
 		return context.Error(c, http.StatusBadRequest, "bad request", err)
 	}
 
-	cardID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	userIDHex := context.GetJWTUserID(c)
+	userID, err := primitive.ObjectIDFromHex(userIDHex)
 	if err != nil {
-		return context.Error(c, http.StatusBadRequest, "bad request", err)
+		return context.Error(c, http.StatusUnauthorized, "unauthorized", err)
+	}
+
+	cardsetIDHex := c.Param("cardset_id")
+
+	if !isCardsetAccessible(cardsetIDHex, userIDHex) {
+		return context.Error(c, http.StatusForbidden, "permission denied", nil)
 	}
 
 	m := model.GetModel()
@@ -42,22 +50,28 @@ func NewComment(c echo.Context) error {
 		Content: p.Comment,
 		Status:  constant.StatusNormal,
 	}
-	commentID, err := m.AddComment(comment)
+	commentIDHex, err := m.AddComment(comment)
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when AddComment", err)
 	}
-	return context.Success(c, commentID)
+	return context.Success(c, commentIDHex)
 }
 
 // GetComments will accept card ID and return comments of the certain card.
 func GetComments(c echo.Context) error {
-	cardID := c.Param("id")
+	cardIDHex := c.Param("id")
+	cardsetIDHex := c.Param("cardset_id")
+	userIDHex := context.GetJWTUserID(c)
+
+	if !isCardsetAccessible(cardsetIDHex, userIDHex) {
+		return context.Error(c, http.StatusForbidden, "permission denied", nil)
+	}
 
 	m := model.GetModel()
 	defer m.Close()
 
 	// Test card ID
-	_, cardExist, err := m.GetCard(cardID)
+	_, cardExist, err := m.GetCard(cardIDHex)
 	if !cardExist {
 		return context.Error(c, http.StatusNotFound, "card not found", nil)
 	}
@@ -65,7 +79,7 @@ func GetComments(c echo.Context) error {
 		return context.Error(c, http.StatusInternalServerError, "error when GetCard", err)
 	}
 
-	comments, commentExist, err := m.GetComments(cardID)
+	comments, commentExist, err := m.GetComments(cardIDHex)
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when GetComments", err)
 	}
@@ -84,6 +98,7 @@ func GetComments(c echo.Context) error {
 		}
 
 		resp = append(resp, param.CommentResponseItem{
+			ID: cmt.ID.Hex(),
 			Owner: param.UserResponse{
 				ID:       user.ID.Hex(),
 				Username: user.Username,
@@ -98,18 +113,26 @@ func GetComments(c echo.Context) error {
 
 // DeleteComment will accept card ID & comment ID and delete the exact comment.
 func DeleteComment(c echo.Context) error {
-	cardID, err := primitive.ObjectIDFromHex(c.Param("id"))
-	if err != nil {
-		return context.Error(c, http.StatusBadRequest, "bad request", err)
-	}
-	commentID, err := primitive.ObjectIDFromHex(c.Param("comment_id"))
+	cardIDHex := c.Param("id")
+	cardID, err := primitive.ObjectIDFromHex(cardIDHex)
 	if err != nil {
 		return context.Error(c, http.StatusBadRequest, "bad request", err)
 	}
 
-	userID, err := primitive.ObjectIDFromHex(context.GetJWTUserID(c))
+	commentIDHex := c.Param("comment_id")
+	commentID, err := primitive.ObjectIDFromHex(commentIDHex)
 	if err != nil {
 		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	userIDHex := context.GetJWTUserID(c)
+	userID, err := primitive.ObjectIDFromHex(userIDHex)
+	if err != nil {
+		return context.Error(c, http.StatusUnauthorized, "unauthorized", err)
+	}
+
+	if !isCommentOwner(commentIDHex, userIDHex) {
+		return context.Error(c, http.StatusForbidden, "permission denied", nil)
 	}
 
 	m := model.GetModel()
@@ -131,4 +154,11 @@ func DeleteComment(c echo.Context) error {
 	}
 
 	return context.Success(c, "ok")
+}
+
+func isCommentOwner(comment, owner string) bool {
+	m := model.GetModel()
+	defer m.Close()
+	_, err := m.GetCommentWithOwner(comment, owner)
+	return err == nil
 }

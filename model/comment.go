@@ -16,6 +16,7 @@ type CommentInterface interface {
 	GetComments(cardID string) ([]Comment, bool, error)
 	UpdateComment(comment Comment) error
 	DeleteComment(comment Comment) (bool, error)
+	GetCommentWithOwner(commentID, owner string) (Comment, error)
 }
 
 // Comment struct in model layer
@@ -105,4 +106,27 @@ func (m *model) DeleteComment(comment Comment) (bool, error) {
 		return true, err
 	}
 	return true, err
+}
+
+// GetCommentWithOwner by comment id & owner id, returns the comment struct, whether the comment exists and error
+func (m *model) GetCommentWithOwner(commentID, owner string) (Comment, error) {
+	comment := Comment{}
+	commentObjID, err := primitive.ObjectIDFromHex(commentID)
+	if err != nil {
+		return comment, err
+	}
+	ownerID, err := primitive.ObjectIDFromHex(owner)
+	if err != nil {
+		return comment, err
+	}
+	filter := bson.M{
+		"_id":      commentObjID,
+		"owner_id": ownerID,
+		"status":   constant.StatusNormal,
+	}
+	err = m.commentC().FindOne(m.ctx, filter).Decode(&comment)
+	if err == mongo.ErrNoDocuments {
+		return comment, nil
+	}
+	return comment, err
 }
