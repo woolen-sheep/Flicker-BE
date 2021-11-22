@@ -31,7 +31,13 @@ type LoginResponse struct {
 }
 
 type UserResponse struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Avatar   string `json:"avatar"`
+	ID       string   `json:"id"`
+	Username string   `json:"username"`
+	Avatar   string   `json:"avatar"`
+	Favorite []string `json:"favorite"`
+}
+
+type AddCollectionRequest struct {
+	CardsetID string `json:"cardset_id" validate:"required"`
+	Liked     bool   `json:"liked"`
 }
