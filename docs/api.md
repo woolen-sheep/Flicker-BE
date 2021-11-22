@@ -179,9 +179,37 @@ Authorization: Bearer 一个巨长的 token
 
 ```json
 {
+  "id": "6194e37bd786c6c07ea8a4fb",
   "username": "xxx",
-  "avatar": "https://example.com/1.jpg"
+  "avatar": "https://example.com/1.jpg",
+  "favorite": ["6199cc3db4600da8e6102dac"]
 }
+```
+
+### POST /favorite
+
+#### 请求参数
+
+- cardset_id：字符串，必需，卡片集 ID
+- liked：字符串，可选，表示请求前用户是否收藏了该卡片集，请求将使此状态反转。默认值为`false`
+
+#### 请求示例
+
+```json
+{
+  "cardset_id": "xxx",
+  "liked": false
+}
+```
+
+#### 响应参数
+
+无额外参数
+
+#### 响应示例
+
+```json
+"ok"
 ```
 
 ## 卡片集 /cardset

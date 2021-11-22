@@ -14,6 +14,7 @@ const colNameCard = "card"
 type CardInterface interface {
 	AddCard(card Card) (string, error)
 	GetCard(id string) (Card, bool, error)
+	GetCardInCardset(cardset string) ([]Card, error)
 	DeleteCard(card Card) (bool, error)
 	UpdateCard(card Card) error
 }
@@ -94,4 +95,23 @@ func (m *model) GetCard(id string) (Card, bool, error) {
 		return card, false, err
 	}
 	return card, true, err
+}
+
+// GetCardInCardset returns the card struct, whether the card exist and error
+func (m *model) GetCardInCardset(cardset string) ([]Card, error) {
+	card := []Card{}
+	cardsetID, err := primitive.ObjectIDFromHex(cardset)
+	if err != nil {
+		return card, err
+	}
+	filter := bson.M{
+		"cardset_id": cardsetID,
+		"status":     constant.StatusNormal,
+	}
+	res, err := m.cardC().Find(m.ctx, filter)
+	if err != nil {
+		return card, err
+	}
+	err = res.All(m.ctx, &card)
+	return card, err
 }

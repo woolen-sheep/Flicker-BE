@@ -9,4 +9,5 @@ func initUserRouter(g *echo.Group) {
 	g.PUT("", controller.UpdateUser)
 	g.GET("/:user_id", controller.GetUser)
 	g.GET("", controller.GetUser)
+	g.POST("/favorite", controller.UpdateFavorite)
 }

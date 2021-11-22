@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -133,9 +134,18 @@ func GetCardset(c echo.Context) error {
 
 	userID := context.GetJWTUserID(c)
 
-	var cardsIDs []string
 	if cardset.Access != constant.CardsetAccessPublic && cardset.OwnerID.Hex() != userID {
 		return context.Error(c, http.StatusForbidden, "permission denied", nil)
+	}
+
+	cardsIDs := []string{}
+	cards, err := m.GetCardInCardset(cardsetID)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when get card id list", err)
+	}
+	fmt.Println(cards)
+	for _, c := range cards {
+		cardsIDs = append(cardsIDs, c.ID.Hex())
 	}
 
 	resp := param.GetCardsetResponse{

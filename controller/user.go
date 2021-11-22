@@ -128,5 +128,32 @@ func GetUser(c echo.Context) error {
 		Username: user.Username,
 		Avatar:   user.Avatar,
 	}
+	for _, f := range user.Favorite {
+		resp.Favorite = append(resp.Favorite, f.Hex())
+	}
 	return context.Success(c, resp)
+}
+
+// UpdateFavorite will add a cardset into current user collection
+func UpdateFavorite(c echo.Context) error {
+	p := param.AddCollectionRequest{}
+	err := c.Bind(&p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+	err = c.Validate(p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	userID := context.GetJWTUserID(c)
+
+	err = m.UpdateFavorite(userID, p.CardsetID, p.Liked)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when UpdateUser", err)
+	}
+	return context.Success(c, "ok")
 }
