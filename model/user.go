@@ -16,6 +16,7 @@ type UserInterface interface {
 	GetUser(id string) (User, bool, error)
 	GetUserByMail(mail string) (user User, err error)
 	UpdateUser(user User) error
+	UpdateFavorite(user, cardset string, liked bool) error
 }
 
 // User struct in model layer
@@ -92,5 +93,35 @@ func (m *model) GetUserByMail(mail string) (user User, err error) {
 // UpdateUser updates user info in database, empty fields will be ignore
 func (m *model) UpdateUser(user User) error {
 	_, err := m.userC().UpdateOne(m.ctx, bson.M{"_id": user.ID}, bson.M{"$set": user})
+	return err
+}
+
+// UpdateFavorite insert a cardset_id into
+func (m *model) UpdateFavorite(user, cardset string, liked bool) error {
+	userID, err := primitive.ObjectIDFromHex(user)
+	if err != nil {
+		return err
+	}
+	cardsetID, err := primitive.ObjectIDFromHex(cardset)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{
+		"_id": userID,
+	}
+
+	operator := "$addToSet"
+	if liked {
+		operator = "$pull"
+	}
+
+	update := bson.M{
+		operator: bson.M{
+			"favorite": cardsetID,
+		},
+	}
+
+	_, err = m.userC().UpdateOne(m.ctx, filter, update)
 	return err
 }
