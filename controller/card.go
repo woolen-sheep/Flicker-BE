@@ -95,11 +95,11 @@ func UpdateCard(c echo.Context) error {
 // DeleteCard will accept card ID and delete the exact card.
 func DeleteCard(c echo.Context) error {
 	cardIDHex := c.Param("id")
-	cardsetID := c.Param("cardset_id")
+	cardsetIDHex := c.Param("cardset_id")
 
 	userID := context.GetJWTUserID(c)
 
-	if !isCardsetOwner(cardsetID, userID) {
+	if !isCardsetOwner(cardsetIDHex, userID) {
 		return context.Error(c, http.StatusForbidden, "permission denied", nil)
 	}
 
@@ -111,9 +111,15 @@ func DeleteCard(c echo.Context) error {
 		return context.Error(c, http.StatusBadRequest, "bad request", err)
 	}
 
+	cardsetID, err := primitive.ObjectIDFromHex(cardsetIDHex)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
 	card := model.Card{
-		ID:     cardID,
-		Status: constant.StatusDeleted,
+		ID:        cardID,
+		CardsetID: cardsetID,
+		Status:    constant.StatusDeleted,
 	}
 
 	exist, err := m.DeleteCard(card)

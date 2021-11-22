@@ -26,7 +26,7 @@ func NewCardset(c echo.Context) error {
 
 	userID, err := primitive.ObjectIDFromHex(context.GetJWTUserID(c))
 	if err != nil {
-		return context.Error(c, http.StatusBadRequest, "bad request", err)
+		return context.Error(c, http.StatusUnauthorized, "unauthorized", err)
 	}
 
 	m := model.GetModel()
@@ -64,7 +64,7 @@ func UpdateCardset(c echo.Context) error {
 
 	userID, err := primitive.ObjectIDFromHex(context.GetJWTUserID(c))
 	if err != nil {
-		return context.Error(c, http.StatusBadRequest, "bad request", err)
+		return context.Error(c, http.StatusUnauthorized, "unauthorized", err)
 	}
 
 	cardset := model.Cardset{
@@ -94,7 +94,7 @@ func DeleteCardset(c echo.Context) error {
 
 	userID, err := primitive.ObjectIDFromHex(context.GetJWTUserID(c))
 	if err != nil {
-		return context.Error(c, http.StatusBadRequest, "bad request", err)
+		return context.Error(c, http.StatusUnauthorized, "unauthorized", err)
 	}
 
 	m := model.GetModel()
@@ -163,4 +163,21 @@ func isCardsetOwner(cardset, owner string) bool {
 	defer m.Close()
 	_, err := m.GetCardsetWithOwner(cardset, owner)
 	return err == nil
+}
+
+func isCardsetAccessible(cardset, user string) bool {
+	m := model.GetModel()
+	defer m.Close()
+
+	_, err := m.GetCardsetWithOwner(cardset, user)
+	if err == nil { // user is the owner of the cardset, then accessible
+		return true
+	}
+
+	c, exist, err := m.GetCardset(cardset)
+	if !exist || err != nil {
+		return false
+	} else { // cardset is public, then accessible
+		return c.Access == 1
+	}
 }

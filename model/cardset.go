@@ -102,7 +102,7 @@ func (m *model) GetCardset(id string) (Cardset, bool, error) {
 	return cardset, true, err
 }
 
-// GetCardsetWithOwner by id and owner id, returns the cardset struct, whether the cardset exist and error
+// GetCardsetWithOwner by id and owner id, returns the cardset struct, whether the cardset exists and error
 func (m *model) GetCardsetWithOwner(id, owner string) (Cardset, error) {
 	cardset := Cardset{}
 	cardsetID, err := primitive.ObjectIDFromHex(id)
