@@ -8,3 +8,10 @@ const (
 	StatusDeleted = -1
 	StatusNormal  = 1
 )
+
+const (
+	DefaultAvatarURLFmt = "https://flicker-static.hust.online/avater/%d.svg"
+	// DefaultAvatarCount is the total count of avatar.
+	// Avatar iterates form 0 to DefaultAvatarCount - 1
+	DefaultAvatarCount = 7
+)

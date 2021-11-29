@@ -2,9 +2,11 @@ package controller
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/woolen-sheep/Flicker-BE/constant"
 	"github.com/woolen-sheep/Flicker-BE/controller/param"
 	"github.com/woolen-sheep/Flicker-BE/model"
 	"github.com/woolen-sheep/Flicker-BE/util"
@@ -48,6 +50,7 @@ func SignUp(c echo.Context) error {
 		Mail:     p.Mail,
 		Username: p.Username,
 		Password: cipher,
+		Avatar:   fmt.Sprintf(constant.DefaultAvatarURLFmt, rand.Intn(constant.DefaultAvatarCount)),
 	}
 	_, err = m.AddUser(user)
 	if err != nil {
