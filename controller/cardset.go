@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -143,7 +142,6 @@ func GetCardset(c echo.Context) error {
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when get card id list", err)
 	}
-	fmt.Println(cards)
 	for _, c := range cards {
 		cardsIDs = append(cardsIDs, c.ID.Hex())
 	}
@@ -154,6 +152,69 @@ func GetCardset(c echo.Context) error {
 		Description: cardset.Description,
 		Access:      cardset.Access,
 		Cards:       cardsIDs,
+	}
+	return context.Success(c, resp)
+}
+
+// GetRandomCardsets will return a list of random public cardsets.
+func GetRandomCardsets(c echo.Context) error {
+	p := param.RandomCardsetsRequest{}
+	err := c.Bind(&p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+	err = c.Validate(&p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	cardsets, err := m.GetRandomCardset(p.Count)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetCardset", err)
+	}
+
+	resp := []param.GetCardsetResponse{}
+	for _, cs := range cardsets {
+		resp = append(resp, param.GetCardsetResponse{
+			ID:          cs.ID.Hex(),
+			Name:        cs.Name,
+			Description: cs.Description,
+			Access:      cs.Access,
+		})
+	}
+	return context.Success(c, resp)
+}
+
+// SearchCardsets will accept query param `keyword` and search in title and description of
+// cardsets and return a cardset array.
+func SearchCardsets(c echo.Context) error {
+	p := param.SearchCardsetRequest{
+		PageRequest: param.DefaultPageRequest,
+	}
+	err := c.Bind(&p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	cardsets, err := m.GetCardsetByKeyword(p.Keyword, p.Skip, p.Limit)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetCardset", err)
+	}
+
+	resp := []param.GetCardsetResponse{}
+	for _, cs := range cardsets {
+		resp = append(resp, param.GetCardsetResponse{
+			ID:          cs.ID.Hex(),
+			Name:        cs.Name,
+			Description: cs.Description,
+			Access:      cs.Access,
+		})
 	}
 	return context.Success(c, resp)
 }

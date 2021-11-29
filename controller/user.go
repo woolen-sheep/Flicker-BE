@@ -157,3 +157,75 @@ func UpdateFavorite(c echo.Context) error {
 	}
 	return context.Success(c, "ok")
 }
+
+// GetFavorite will return favorite cardsets of current user.
+func GetFavorite(c echo.Context) error {
+	userID := c.Param("user_id")
+
+	if len(userID) == 0 {
+		userID = context.GetJWTUserID(c)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	user, exist, err := m.GetUser(userID)
+	if !exist {
+		return context.Error(c, http.StatusNotFound, "user not found", nil)
+	}
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetUser", err)
+	}
+
+	cardsets, err := m.GetCardsetByIDList(user.Favorite)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetCardsetByIDList", err)
+	}
+	res := []param.CardsetInfoResponse{}
+	for _, cs := range cardsets {
+		res = append(res, param.CardsetInfoResponse{
+			ID:          cs.ID.Hex(),
+			OwnerID:     cs.OwnerID.Hex(),
+			Name:        cs.Name,
+			Description: cs.Description,
+			Access:      cs.Access,
+		})
+	}
+	return context.Success(c, res)
+}
+
+// GetCreated will return cardsets created by current user.
+func GetCreated(c echo.Context) error {
+	userID := c.Param("user_id")
+
+	if len(userID) == 0 {
+		userID = context.GetJWTUserID(c)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	user, exist, err := m.GetUser(userID)
+	if !exist {
+		return context.Error(c, http.StatusNotFound, "user not found", nil)
+	}
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetUser", err)
+	}
+
+	cardsets, err := m.GetCardsetByIDList(user.Favorite)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetCardsetByIDList", err)
+	}
+	res := []param.CardsetInfoResponse{}
+	for _, cs := range cardsets {
+		res = append(res, param.CardsetInfoResponse{
+			ID:          cs.ID.Hex(),
+			OwnerID:     cs.OwnerID.Hex(),
+			Name:        cs.Name,
+			Description: cs.Description,
+			Access:      cs.Access,
+		})
+	}
+	return context.Success(c, res)
+}
