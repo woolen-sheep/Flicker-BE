@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/woolen-sheep/Flicker-BE/config"
+	"github.com/woolen-sheep/Flicker-BE/constant/i18n"
 )
 
 // Response 返回值
@@ -30,6 +32,12 @@ func Error(c echo.Context, status int, message string, err error) error {
 		Data:    nil,
 		Message: message,
 		Success: false,
+	}
+	if config.C.I18N.Enabled {
+		statusString, ok := i18n.Status[config.C.I18N.Language][status]
+		if ok {
+			ret.Message = statusString
+		}
 	}
 	if err != nil {
 		ret.Error = err.Error()
