@@ -155,10 +155,18 @@ func UpdateFavorite(c echo.Context) error {
 
 	userID := context.GetJWTUserID(c)
 
-	err = m.UpdateFavorite(userID, p.CardsetID, p.Liked)
+	modified, err := m.UpdateFavorite(userID, p.CardsetID, p.Liked)
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when UpdateUser", err)
 	}
+
+	if modified {
+		err = m.UpdateFavoriteCount(p.CardsetID, p.Liked)
+		if err != nil {
+			return context.Error(c, http.StatusInternalServerError, "error when UpdateFavoriteCount", err)
+		}
+	}
+
 	return context.Success(c, "ok")
 }
 

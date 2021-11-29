@@ -146,12 +146,27 @@ func GetCardset(c echo.Context) error {
 		cardsIDs = append(cardsIDs, c.ID.Hex())
 	}
 
+	user, _, err := m.GetUser(cardset.OwnerID.Hex())
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when get cardset owner", err)
+	}
+
+	err = m.UpdateVisitCount(cardsetID)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when UpdateVisitCount", err)
+	}
+
 	resp := param.GetCardsetResponse{
-		ID:          cardsetID,
-		Name:        cardset.Name,
-		Description: cardset.Description,
-		Access:      cardset.Access,
-		Cards:       cardsIDs,
+		ID:            cardsetID,
+		OwnerID:       cardset.OwnerID.Hex(),
+		OwnerName:     user.Username,
+		Name:          cardset.Name,
+		Description:   cardset.Description,
+		FavoriteCount: cardset.FavoriteCount,
+		VisitCount:    cardset.VisitCount,
+		Access:        cardset.Access,
+		CreateTime:    cardset.CreateTime,
+		Cards:         cardsIDs,
 	}
 	return context.Success(c, resp)
 }

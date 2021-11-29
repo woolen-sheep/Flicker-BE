@@ -22,9 +22,14 @@ type RandomCardsetsRequest struct {
 }
 
 type GetCardsetResponse struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Access      int      `json:"access"`
-	Cards       []string `json:"cards"`
+	ID            string   `json:"id"`
+	OwnerID       string   `json:"owner_id"`
+	OwnerName     string   `json:"owner_name"`
+	Name          string   `json:"name"`
+	Description   string   `json:"description"`
+	Access        int      `json:"access"`
+	FavoriteCount int      `json:"favorite_count"`
+	VisitCount    int      `json:"visit_count"`
+	CreateTime    int64    `json:"create_time"`
+	Cards         []string `json:"cards"`
 }

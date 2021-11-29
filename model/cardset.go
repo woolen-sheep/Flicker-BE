@@ -22,16 +22,20 @@ type CardsetInterface interface {
 	GetCardsetByIDList(ids []primitive.ObjectID) ([]Cardset, error)
 	GetCardsetByKeyword(keyword string, skip, limit int) ([]Cardset, error)
 	GetRandomCardset(count int) ([]Cardset, error)
+	UpdateFavoriteCount(id string, liked bool) error
+	UpdateVisitCount(id string) error
 }
 
 // Cardset struct in model layer
 type Cardset struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	OwnerID     primitive.ObjectID `bson:"owner_id,omitempty"`
-	Name        string             `bson:"name,omitempty"`
-	Description string             `bson:"description,omitempty"`
-	Access      int                `bson:"access,omitempty"`
-	Status      int                `bson:"status,omitempty"`
+	ID            primitive.ObjectID `bson:"_id"`
+	OwnerID       primitive.ObjectID `bson:"owner_id,omitempty"`
+	Name          string             `bson:"name,omitempty"`
+	Description   string             `bson:"description,omitempty"`
+	Access        int                `bson:"access,omitempty"`
+	Status        int                `bson:"status,omitempty"`
+	FavoriteCount int                `bson:"favorite_count,omitempty"`
+	VisitCount    int                `bson:"visit_count,omitempty"`
 
 	// CreateTime is the first time of adding the cardset
 	CreateTime int64 `bson:"create_time"`
@@ -218,4 +222,52 @@ func (m *model) GetRandomCardset(count int) ([]Cardset, error) {
 	}
 	err = cur.All(m.ctx, &card)
 	return card, err
+}
+
+// UpdateFavoriteCount will increase favorite count when liked is false
+// and decrease otherwise.
+func (m *model) UpdateFavoriteCount(id string, liked bool) error {
+	cardsetID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{
+		"_id": cardsetID,
+	}
+
+	count := 1
+	if liked {
+		count = -1
+	}
+
+	update := bson.M{
+		"$inc": bson.M{
+			"favorite_count": count,
+		},
+	}
+
+	_, err = m.cardsetC().UpdateOne(m.ctx, filter, update)
+	return err
+}
+
+// UpdateVisitCount will increase visit count.
+func (m *model) UpdateVisitCount(id string) error {
+	cardsetID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{
+		"_id": cardsetID,
+	}
+
+	update := bson.M{
+		"$inc": bson.M{
+			"visit_count": 1,
+		},
+	}
+
+	_, err = m.cardsetC().UpdateOne(m.ctx, filter, update)
+	return err
 }
