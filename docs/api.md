@@ -214,6 +214,80 @@ Authorization: Bearer 一个巨长的 token
 "ok"
 ```
 
+### GET /favorite 获取用户收藏的卡片集
+
+#### 请求参数
+
+无，用户id从jwt中读取
+
+#### 响应参数
+
+由以下字段组成的数组
+
+- id：字符串，卡片集id
+- owner_id：字符串，创建者id
+- name：字符串，名称
+- description：字符串，卡片集描述
+- access：整数，访问权限
+
+#### 响应示例
+
+```json
+[
+  {
+    "id": "6199cc3db4600da8e6102dac",
+    "owner_id": "6194e37bd786c6c07ea8a4fb",
+    "name": "test-cards",
+    "description": "test test.",
+    "access": 1
+  },
+  {
+    "id": "6199cc3db4600da8e6102dac",
+    "owner_id": "6194e37bd786c6c07ea8a4fb",
+    "name": "test-cards",
+    "description": "test test.",
+    "access": 1
+  }
+]
+```
+
+### GET /created 获取用户创建的卡片集
+
+#### 请求参数
+
+无，用户id从jwt中读取
+
+#### 响应参数
+
+由以下字段组成的数组
+
+- id：字符串，卡片集id
+- owner_id：字符串，创建者id
+- name：字符串，名称
+- description：字符串，卡片集描述
+- access：整数，访问权限
+
+#### 响应示例
+
+```json
+[
+  {
+    "id": "6199cc3db4600da8e6102dac",
+    "owner_id": "6194e37bd786c6c07ea8a4fb",
+    "name": "test-cards",
+    "description": "test test.",
+    "access": 1
+  },
+  {
+    "id": "6199cc3db4600da8e6102dac",
+    "owner_id": "6194e37bd786c6c07ea8a4fb",
+    "name": "test-cards",
+    "description": "test test.",
+    "access": 1
+  }
+]
+```
+
 ## 卡片集 /cardset
 
 - alias 题库
@@ -325,6 +399,66 @@ Authorization: Bearer 一个巨长的 token
   "access": 1,
   "cards": []
 }
+```
+
+### GET / 搜索卡片集
+
+#### 请求参数
+
+- keyword：字符串，必需，关键词
+- skip：整数，可选，跳过的记录条数
+  - 默认值为 0
+- limit：整数，可选，返回的记录最大条数
+  - 默认值为 10
+
+#### 响应参数
+
+由以下参数组成的数组
+
+- name：字符串，名称
+- description：字符串，卡片集描述
+- access：整数，访问权限
+- cards：字符串数组，卡片的 id 列表
+
+#### 响应示例
+
+```json
+[
+  {
+    "id": "id",
+    "name": "test-cards",
+    "description": "test test.",
+    "access": 1
+  }
+]
+```
+
+### GET /random 获取随机卡片集
+
+#### 请求参数
+
+- count：整数，必需，随机卡片集数目
+
+#### 响应参数
+
+由以下参数组成的数组
+
+- name：字符串，名称
+- description：字符串，卡片集描述
+- access：整数，访问权限
+- cards：字符串数组，卡片的 id 列表
+
+#### 响应示例
+
+```json
+[
+  {
+    "id": "id",
+    "name": "test-cards",
+    "description": "test test.",
+    "access": 1
+  }
+]
 ```
 
 ## 卡片 /cardset/:cardset_id/card

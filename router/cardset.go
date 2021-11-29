@@ -10,4 +10,6 @@ func initCardsetRouter(g *echo.Group) {
 	g.PUT("/:id", controller.UpdateCardset)
 	g.DELETE("/:id", controller.DeleteCardset)
 	g.GET("/:id", controller.GetCardset)
+	g.GET("", controller.SearchCardsets)
+	g.GET("/random", controller.GetRandomCardsets)
 }

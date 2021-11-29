@@ -41,3 +41,11 @@ type AddCollectionRequest struct {
 	CardsetID string `json:"cardset_id" validate:"required"`
 	Liked     bool   `json:"liked"`
 }
+
+type CardsetInfoResponse struct {
+	ID          string `json:"id"`
+	OwnerID     string `json:"owner_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Access      int    `json:"access,omitempty"`
+}

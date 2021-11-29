@@ -10,4 +10,6 @@ func initUserRouter(g *echo.Group) {
 	g.GET("/:user_id", controller.GetUser)
 	g.GET("", controller.GetUser)
 	g.POST("/favorite", controller.UpdateFavorite)
+	g.GET("/favorite", controller.GetFavorite)
+	g.GET("/created", controller.GetCreated)
 }

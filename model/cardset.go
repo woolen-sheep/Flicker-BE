@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const colNameCardset = "cardset"
@@ -17,6 +18,10 @@ type CardsetInterface interface {
 	DeleteCardset(cardset Cardset) (bool, error)
 	UpdateCardset(cardset Cardset) error
 	GetCardsetWithOwner(id, owner string) (Cardset, error)
+	GetCardsetByOwner(owner string) (Cardset, error)
+	GetCardsetByIDList(ids []primitive.ObjectID) ([]Cardset, error)
+	GetCardsetByKeyword(keyword string, skip, limit int) ([]Cardset, error)
+	GetRandomCardset(count int) ([]Cardset, error)
 }
 
 // Cardset struct in model layer
@@ -123,4 +128,94 @@ func (m *model) GetCardsetWithOwner(id, owner string) (Cardset, error) {
 		return cardset, nil
 	}
 	return cardset, err
+}
+
+// GetCardsetByOwner by id and owner id, returns the cardset struct, whether the cardset exists and error
+func (m *model) GetCardsetByOwner(owner string) (Cardset, error) {
+	cardset := Cardset{}
+	ownerID, err := primitive.ObjectIDFromHex(owner)
+	if err != nil {
+		return cardset, err
+	}
+	filter := bson.M{
+		"owner_id": ownerID,
+		"status":   constant.StatusNormal,
+	}
+	err = m.cardsetC().FindOne(m.ctx, filter).Decode(&cardset)
+	if err == mongo.ErrNoDocuments {
+		return cardset, nil
+	}
+	return cardset, err
+}
+
+// GetCardsetByIDList returns the card struct, whether the card exist and error.
+func (m *model) GetCardsetByIDList(ids []primitive.ObjectID) ([]Cardset, error) {
+	card := []Cardset{}
+	filter := bson.M{
+		"_id": bson.M{
+			"$in": ids,
+		},
+		"status": constant.StatusNormal,
+	}
+	res, err := m.cardsetC().Find(m.ctx, filter)
+	if err == mongo.ErrNoDocuments {
+		return card, nil
+	}
+	if err != nil {
+		return card, err
+	}
+	err = res.All(m.ctx, &card)
+	return card, err
+}
+
+// GetCardsetByKeyword returns cardsets which contains keyword in name or description.
+func (m *model) GetCardsetByKeyword(keyword string, skip, limit int) ([]Cardset, error) {
+	card := []Cardset{}
+	filter := bson.M{
+		"$or": bson.A{
+			bson.M{
+				"name": bson.M{"$regex": keyword},
+			},
+			bson.M{
+				"description": bson.M{"$regex": keyword},
+			},
+		},
+		"access": constant.CardsetAccessPublic,
+		"status": constant.StatusNormal,
+	}
+	opt := options.Find().SetSkip(int64(skip)).SetLimit(int64(limit))
+	res, err := m.cardsetC().Find(m.ctx, filter, opt)
+	if err == mongo.ErrNoDocuments {
+		return card, nil
+	}
+	if err != nil {
+		return card, err
+	}
+	err = res.All(m.ctx, &card)
+	return card, err
+}
+
+// GetRandomCardset returns cardsets which contains keyword in name or description.
+func (m *model) GetRandomCardset(count int) ([]Cardset, error) {
+	card := []Cardset{}
+	cur, err := m.cardsetC().Aggregate(m.ctx, mongo.Pipeline{
+		{{
+			Key: "$match", Value: bson.M{
+				"access": constant.CardsetAccessPublic,
+			},
+		}},
+		{{
+			Key: "$sample", Value: bson.M{
+				"size": count,
+			},
+		}},
+	})
+	if err == mongo.ErrNoDocuments {
+		return card, nil
+	}
+	if err != nil {
+		return card, err
+	}
+	err = cur.All(m.ctx, &card)
+	return card, err
 }
