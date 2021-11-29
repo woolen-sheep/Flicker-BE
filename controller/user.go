@@ -189,11 +189,15 @@ func GetFavorite(c echo.Context) error {
 		return context.Error(c, http.StatusInternalServerError, "error when GetUser", err)
 	}
 
+	res := []param.CardsetInfoResponse{}
+	if len(user.Favorite) == 0 {
+		return context.Success(c, res)
+	}
+
 	cardsets, err := m.GetCardsetByIDList(user.Favorite)
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when GetCardsetByIDList", err)
 	}
-	res := []param.CardsetInfoResponse{}
 	for _, cs := range cardsets {
 		res = append(res, param.CardsetInfoResponse{
 			ID:          cs.ID.Hex(),
@@ -217,15 +221,7 @@ func GetCreated(c echo.Context) error {
 	m := model.GetModel()
 	defer m.Close()
 
-	user, exist, err := m.GetUser(userID)
-	if !exist {
-		return context.Error(c, http.StatusNotFound, "user not found", nil)
-	}
-	if err != nil {
-		return context.Error(c, http.StatusInternalServerError, "error when GetUser", err)
-	}
-
-	cardsets, err := m.GetCardsetByIDList(user.Favorite)
+	cardsets, err := m.GetCardsetByOwner(userID)
 	if err != nil {
 		return context.Error(c, http.StatusInternalServerError, "error when GetCardsetByIDList", err)
 	}

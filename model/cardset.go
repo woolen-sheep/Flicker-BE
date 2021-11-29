@@ -18,7 +18,7 @@ type CardsetInterface interface {
 	DeleteCardset(cardset Cardset) (bool, error)
 	UpdateCardset(cardset Cardset) error
 	GetCardsetWithOwner(id, owner string) (Cardset, error)
-	GetCardsetByOwner(owner string) (Cardset, error)
+	GetCardsetByOwner(owner string) ([]Cardset, error)
 	GetCardsetByIDList(ids []primitive.ObjectID) ([]Cardset, error)
 	GetCardsetByKeyword(keyword string, skip, limit int) ([]Cardset, error)
 	GetRandomCardset(count int) ([]Cardset, error)
@@ -134,9 +134,9 @@ func (m *model) GetCardsetWithOwner(id, owner string) (Cardset, error) {
 	return cardset, err
 }
 
-// GetCardsetByOwner by id and owner id, returns the cardset struct, whether the cardset exists and error
-func (m *model) GetCardsetByOwner(owner string) (Cardset, error) {
-	cardset := Cardset{}
+// GetCardsetByOwner owner id, returns the cardset list created by the user.
+func (m *model) GetCardsetByOwner(owner string) ([]Cardset, error) {
+	cardset := []Cardset{}
 	ownerID, err := primitive.ObjectIDFromHex(owner)
 	if err != nil {
 		return cardset, err
@@ -145,7 +145,11 @@ func (m *model) GetCardsetByOwner(owner string) (Cardset, error) {
 		"owner_id": ownerID,
 		"status":   constant.StatusNormal,
 	}
-	err = m.cardsetC().FindOne(m.ctx, filter).Decode(&cardset)
+	res, err := m.cardsetC().Find(m.ctx, filter)
+	if err != nil {
+		return cardset, err
+	}
+	err = res.All(m.ctx, &cardset)
 	if err == mongo.ErrNoDocuments {
 		return cardset, nil
 	}
