@@ -35,6 +35,7 @@ type Config struct {
 	Mail    mail    `yaml:"mail"`
 	Qiniu   qiniu   `yaml:"qiniu"`
 	LogConf logConf `yaml:"logConf"`
+	I18N    i18n    `yaml:"i18n"`
 	Debug   bool    `yaml:"debug"`
 }
 
@@ -79,6 +80,11 @@ type qiniu struct {
 type logConf struct {
 	LogPath     string `yaml:"log_path"`
 	LogFileName string `yaml:"log_file_name"`
+}
+
+type i18n struct {
+	Enabled  bool   `yaml:"enabled"`
+	Language string `yaml:"language"`
 }
 
 func init() {
