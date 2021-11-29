@@ -96,6 +96,7 @@ func UpdateUser(c echo.Context) error {
 		ID:       oldUser.ID,
 		Username: p.Username,
 		Password: cipher,
+		Avatar:   p.Avatar,
 	}
 	err = m.UpdateUser(user)
 	if err != nil {
