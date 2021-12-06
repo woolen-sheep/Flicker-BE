@@ -5,9 +5,10 @@ type NewCommentRequest struct {
 }
 
 type CommentResponseItem struct {
-	ID      string       `json:"id"`
-	Owner   UserResponse `json:"owner"`
-	Comment string       `json:"comment"`
+	ID         string       `json:"id"`
+	Owner      UserResponse `json:"owner"`
+	Comment    string       `json:"comment"`
+	LastUpdate string       `json:"lastupdate"`
 }
 
 type GetCommentResponse = []CommentResponseItem
