@@ -167,6 +167,7 @@ func GetCardset(c echo.Context) error {
 		Access:        cardset.Access,
 		CreateTime:    cardset.CreateTime,
 		Cards:         cardsIDs,
+		IsFavorite:    m.IsUserFavorite(userID, cardset.ID),
 	}
 	return context.Success(c, resp)
 }

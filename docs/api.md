@@ -393,6 +393,7 @@ Authorization: Bearer 一个巨长的 token
 - create_time：整数，创建时间戳
 - access：整数，访问权限
 - cards：字符串数组，卡片的 id 列表
+- is_favorite: 布尔值，是否被当前登录用户喜欢
 
 #### 响应示例
 
@@ -407,7 +408,8 @@ Authorization: Bearer 一个巨长的 token
   "visit_count": 7,
   "create_time": 1637469245,
   "access": 1,
-  "cards": []
+  "cards": [],
+  "is_favorite": true
 }
 ```
 

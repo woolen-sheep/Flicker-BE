@@ -17,6 +17,7 @@ type UserInterface interface {
 	GetUserByMail(mail string) (user User, err error)
 	UpdateUser(user User) error
 	UpdateFavorite(user, cardset string, liked bool) (bool, error)
+	IsUserFavorite(user string, cardsetID primitive.ObjectID) bool
 }
 
 // User struct in model layer
@@ -129,4 +130,17 @@ func (m *model) UpdateFavorite(user, cardset string, liked bool) (bool, error) {
 	}
 
 	return res.ModifiedCount != 0, err
+}
+
+func (m *model) IsUserFavorite(user string, cardsetID primitive.ObjectID) bool {
+	userID, err := primitive.ObjectIDFromHex(user)
+	if err != nil {
+		return false
+	}
+	filter := bson.M{
+		"_id":      userID,
+		"favorite": cardsetID,
+	}
+	res := m.userC().FindOne(m.ctx, filter).Err()
+	return res == nil
 }
