@@ -195,10 +195,13 @@ func GetRandomCardsets(c echo.Context) error {
 	resp := []param.GetCardsetResponse{}
 	for _, cs := range cardsets {
 		resp = append(resp, param.GetCardsetResponse{
-			ID:          cs.ID.Hex(),
-			Name:        cs.Name,
-			Description: cs.Description,
-			Access:      cs.Access,
+			ID:            cs.ID.Hex(),
+			Name:          cs.Name,
+			Description:   cs.Description,
+			FavoriteCount: cs.FavoriteCount,
+			VisitCount:    cs.VisitCount,
+			CreateTime:    cs.CreateTime,
+			Access:        cs.Access,
 		})
 	}
 	return context.Success(c, resp)
@@ -226,10 +229,13 @@ func SearchCardsets(c echo.Context) error {
 	resp := []param.GetCardsetResponse{}
 	for _, cs := range cardsets {
 		resp = append(resp, param.GetCardsetResponse{
-			ID:          cs.ID.Hex(),
-			Name:        cs.Name,
-			Description: cs.Description,
-			Access:      cs.Access,
+			ID:            cs.ID.Hex(),
+			Name:          cs.Name,
+			Description:   cs.Description,
+			FavoriteCount: cs.FavoriteCount,
+			VisitCount:    cs.VisitCount,
+			CreateTime:    cs.CreateTime,
+			Access:        cs.Access,
 		})
 	}
 	return context.Success(c, resp)

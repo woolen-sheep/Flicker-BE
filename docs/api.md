@@ -429,6 +429,9 @@ Authorization: Bearer 一个巨长的 token
 
 - name：字符串，名称
 - description：字符串，卡片集描述
+- favorite_count：字符串，收藏数量
+- visit_count：字符串，访问数量
+- create_time：整数，创建时间戳
 - access：整数，访问权限
 - cards：字符串数组，卡片的 id 列表
 
@@ -440,6 +443,9 @@ Authorization: Bearer 一个巨长的 token
     "id": "id",
     "name": "test-cards",
     "description": "test test.",
+    "favorite_count": 1,
+    "visit_count": 7,
+    "create_time": 1637469245,
     "access": 1
   }
 ]
@@ -457,6 +463,9 @@ Authorization: Bearer 一个巨长的 token
 
 - name：字符串，名称
 - description：字符串，卡片集描述
+- favorite_count：字符串，收藏数量
+- visit_count：字符串，访问数量
+- create_time：整数，创建时间戳
 - access：整数，访问权限
 - cards：字符串数组，卡片的 id 列表
 
@@ -468,6 +477,9 @@ Authorization: Bearer 一个巨长的 token
     "id": "id",
     "name": "test-cards",
     "description": "test test.",
+    "favorite_count": 1,
+    "visit_count": 7,
+    "create_time": 1637469245,
     "access": 1
   }
 ]
