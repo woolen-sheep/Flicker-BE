@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -104,7 +105,8 @@ func GetComments(c echo.Context) error {
 				Username: user.Username,
 				Avatar:   user.Avatar,
 			},
-			Comment: cmt.Content,
+			Comment:    cmt.Content,
+			LastUpdate: fmt.Sprintf("%d", cmt.LastUpdateTime),
 		})
 	}
 
