@@ -97,3 +97,26 @@ func GetRecords(c echo.Context) error {
 	}
 	return context.Success(c, resp)
 }
+
+func ClearRecords(c echo.Context) error {
+	cardsetIDHex := c.Param("cardset_id")
+
+	userIDHex := context.GetJWTUserID(c)
+
+	userID, err := primitive.ObjectIDFromHex(userIDHex)
+	if err != nil {
+		return context.Error(c, http.StatusUnauthorized, "wrong user id", err)
+	}
+	cardsetID, err := primitive.ObjectIDFromHex(cardsetIDHex)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+	err = m.ClearRecords(cardsetID, userID)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "clear records failed", err)
+	}
+	return context.Success(c, "ok")
+}

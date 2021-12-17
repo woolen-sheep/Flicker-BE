@@ -15,6 +15,7 @@ const colNameRecord = "record"
 type RecordInterface interface {
 	UpdateRecord(record Record) error
 	GetRecords(cardsetID, ownerID primitive.ObjectID) ([]Record, error)
+	ClearRecords(cardsetID, ownerID primitive.ObjectID) error
 }
 
 // Card struct in model layer
@@ -96,4 +97,14 @@ func (m *model) GetRecords(cardsetID, ownerID primitive.ObjectID) ([]Record, err
 	}
 	err = res.All(m.ctx, &records)
 	return records, err
+}
+
+// ClearRecords of certain cardset and user
+func (m *model) ClearRecords(cardsetID, ownerID primitive.ObjectID) error {
+	filter := bson.M{
+		"cardset_id": cardsetID,
+		"owner_id":   ownerID,
+	}
+	_, err := m.recordC().DeleteMany(m.ctx, filter)
+	return err
 }

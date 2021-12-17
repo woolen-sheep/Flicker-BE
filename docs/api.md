@@ -799,6 +799,22 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
 }
 ```
 
+### DELETE /:cardset_id 清空卡片集学习记录
+
+#### 请求参数
+
+- cardset_id：路径参数，卡片集id
+
+#### 响应参数
+
+无额外参数
+
+#### 响应示例
+
+```json
+"ok"
+```
+
 ### tmp
 
 #### 请求参数
