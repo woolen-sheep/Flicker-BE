@@ -770,7 +770,7 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
 #### 响应参数
 
 - records：由下列参数组成的对象数组：
-  - id：字符串，卡片id
+  - card_id：字符串，卡片id
   - last_study：整数，unix时间戳，最后一次学习时间
   - study_times：整数，学习次数
   - status：整数，掌握状况
@@ -784,13 +784,13 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
   "total": 10,
   "records": [
     {
-      "id": "xxx",
+      "card_id": "xxx",
       "status": 0,
       "study_times": 1,
       "last_study": 0
     },
     {
-      "id": "xxx",
+      "card_id": "xxx",
       "status": 0,
       "study_times": 1,
       "last_study": 0
