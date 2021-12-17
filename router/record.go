@@ -9,4 +9,5 @@ func initRecordRouter(g *echo.Group) {
 	// Card APIs
 	g.POST("/:cardset_id/:card_id", controller.UpdateRecord)
 	g.GET("/:cardset_id", controller.GetRecords)
+	g.DELETE("/:cardset_id", controller.ClearRecords)
 }
