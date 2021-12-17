@@ -147,7 +147,7 @@ func (m *model) GetCount(cardset string) (int, error) {
 	filter := bson.M{
 		"cardset_id": cardsetID,
 	}
-	count, err := m.cardsetC().CountDocuments(m.ctx, filter)
+	count, err := m.cardC().CountDocuments(m.ctx, filter)
 	if err != nil {
 		return 0, err
 	}
