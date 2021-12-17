@@ -735,6 +735,70 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
 }
 ```
 
+## 学习记录 /record
+
+### POST /:cardset_id/:card_id 添加学习记录
+
+#### 请求参数
+
+- cardset_id：路径参数，卡片集id
+- card_id：路径参数，卡片id
+- status：整数，学习状态
+  - 0：未掌握；1：已掌握
+
+当后端接收到这个请求：
+
+- 若这张卡是第一次学习，记录学习时间，并且学习次数为 1；
+- 若这张卡已经学过，如果上次学习时间不在当天，则学习次数加 1；更新学习时间；
+
+#### 响应参数
+
+无额外参数
+
+#### 响应示例
+
+```json
+"ok"
+```
+
+### GET /:cardset_id 获取卡片集学习记录
+
+#### 请求参数
+
+- cardset_id：路径参数，卡片集id
+
+#### 响应参数
+
+- records：由下列参数组成的对象数组：
+  - id：字符串，卡片id
+  - last_study：整数，unix时间戳，最后一次学习时间
+  - study_times：整数，学习次数
+  - status：整数，掌握状况
+    - 0：未掌握；1：已掌握
+- total：总卡片数
+
+#### 响应示例
+
+```json
+{
+  "total": 10,
+  "records": [
+    {
+      "id": "xxx",
+      "status": 0,
+      "study_times": 1,
+      "last_study": 0
+    },
+    {
+      "id": "xxx",
+      "status": 0,
+      "study_times": 1,
+      "last_study": 0
+    }
+  ]
+}
+```
+
 ### tmp
 
 #### 请求参数
