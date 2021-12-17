@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/woolen-sheep/Flicker-BE/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -35,10 +36,25 @@ func (m *model) recordC() *mongo.Collection {
 
 // UpdateRecord inserts a new study record into database when it's not exist
 // and update `last_study` and `study_times` otherwise.
+// Only record in different natural day (UTC+8) will increase `study_times`.
 func (m *model) UpdateRecord(record Record) error {
 	record.ID = primitive.NewObjectID()
-
 	record.LastStudy = time.Now().Unix()
+
+	oldRecord, err := m.GetRecord(record.CardsetID, record.CardID, record.OwnerID)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return err
+	}
+
+	// only first study in a day will increase study_times
+	incValue := 1
+	if err == nil {
+		currentDay := util.GetDayUnix(time.Now())
+		if oldRecord.LastStudy > currentDay {
+			incValue = 0
+		}
+	}
+
 	filter := bson.M{
 		"owner_id":   record.OwnerID,
 		"cardset_id": record.CardsetID,
@@ -46,14 +62,25 @@ func (m *model) UpdateRecord(record Record) error {
 	}
 	update := bson.D{
 		{Key: "$setOnInsert", Value: record},
-		{Key: "$inc", Value: bson.M{"study_times": 1}},
+		{Key: "$inc", Value: bson.M{"study_times": incValue}},
 	}
 	boolTrue := true
 	opt := options.UpdateOptions{
 		Upsert: &boolTrue,
 	}
-	_, err := m.recordC().UpdateOne(m.ctx, filter, update, &opt)
+	_, err = m.recordC().UpdateOne(m.ctx, filter, update, &opt)
 	return err
+}
+
+func (m *model) GetRecord(cardsetID, cardID, ownerID primitive.ObjectID) (Record, error) {
+	records := Record{}
+	filter := bson.M{
+		"cardset_id": cardsetID,
+		"card_id":    cardID,
+		"owner_id":   ownerID,
+	}
+	err := m.recordC().FindOne(m.ctx, filter).Decode(&records)
+	return records, err
 }
 
 // GetRecords of certain cardset and user
