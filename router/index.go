@@ -16,6 +16,8 @@ func InitRouter(g *echo.Group) {
 	initCardRouter(cardGrp)
 	serviceGrp := g.Group("/service")
 	initServiceRouter(serviceGrp)
+	recordGrp := g.Group("/record")
+	initRecordRouter(recordGrp)
 }
 
 func initIndexRouter(g *echo.Group) {

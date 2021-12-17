@@ -18,6 +18,7 @@ type CardInterface interface {
 	GetCardInCardset(cardset string) ([]Card, error)
 	DeleteCard(card Card) (bool, error)
 	UpdateCard(card Card) error
+	GetCount(cardset string) (int, error)
 }
 
 // Card struct in model layer
@@ -135,4 +136,20 @@ func (m *model) GetCardInCardset(cardset string) ([]Card, error) {
 	}
 	err = res.All(m.ctx, &card)
 	return card, err
+}
+
+// GetCount of cards in certain cardset
+func (m *model) GetCount(cardset string) (int, error) {
+	cardsetID, err := primitive.ObjectIDFromHex(cardset)
+	if err != nil {
+		return 0, err
+	}
+	filter := bson.M{
+		"cardset_id": cardsetID,
+	}
+	count, err := m.cardsetC().CountDocuments(m.ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+	return int(count), err
 }

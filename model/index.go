@@ -22,8 +22,10 @@ type Model interface {
 	CardsetInterface
 	// CardInterface contains all card functions in model layer
 	CardInterface
-	// CommentInterface contains all card functions in model layer
+	// CommentInterface contains all comment functions in model layer
 	CommentInterface
+	// RecordInterface contains all record functions in model layer
+	RecordInterface
 }
 
 type model struct {
