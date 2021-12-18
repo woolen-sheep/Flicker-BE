@@ -1,6 +1,8 @@
 package util
 
 import (
+	"strings"
+
 	"github.com/labstack/gommon/random"
 	"github.com/woolen-sheep/Flicker-BE/config"
 
@@ -13,7 +15,8 @@ func GenerateVerifyCode() string {
 }
 
 func SendMailVerifyCode(mail, code string) error {
-	return SendMail(mail, "Flicker验证码", code)
+	content := strings.Replace(config.C.Mail.Template, "{{CODE}}", code, 1)
+	return SendMail(mail, "Flicker验证码", content)
 }
 
 // SendMail through qq SMTP service.

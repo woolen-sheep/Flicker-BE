@@ -33,7 +33,7 @@ func SendVerifyCode(c echo.Context) error {
 	}
 
 	if blocking {
-		return context.Error(c, http.StatusBadRequest, "code send too often", nil)
+		return context.Error(c, http.StatusTooManyRequests, "code send too often", nil)
 	}
 
 	code := util.GenerateVerifyCode()

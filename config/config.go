@@ -63,11 +63,13 @@ type jwt struct {
 }
 
 type mail struct {
-	Sender   string `yaml:"sender"`
-	Address  string `yaml:"address"`
-	Password string `yaml:"password"`
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
+	Sender       string `yaml:"sender"`
+	Address      string `yaml:"address"`
+	Password     string `yaml:"password"`
+	Host         string `yaml:"host"`
+	TemplateFile string `yaml:"template_file"`
+	Template     string `yaml:"template"`
+	Port         int    `yaml:"port"`
 }
 
 type qiniu struct {
@@ -115,6 +117,12 @@ func init() {
 	}
 
 	C = config
+
+	b, err := ioutil.ReadFile(C.Mail.TemplateFile)
+	if err != nil {
+		log.Panic(err)
+	}
+	C.Mail.Template = string(b)
 
 	log.Println("Config " + configFile + " loaded.")
 	if C.Debug {
