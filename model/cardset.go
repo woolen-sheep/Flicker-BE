@@ -210,6 +210,7 @@ func (m *model) GetRandomCardset(count int) ([]Cardset, error) {
 		{{
 			Key: "$match", Value: bson.M{
 				"access": constant.CardsetAccessPublic,
+				"status": constant.StatusNormal,
 			},
 		}},
 		{{
