@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/woolen-sheep/Flicker-BE/constant"
@@ -17,15 +18,18 @@ type CommentInterface interface {
 	UpdateComment(comment Comment) error
 	DeleteComment(comment Comment) (bool, error)
 	GetCommentWithOwner(commentID, owner string) (Comment, error)
+	UpdateLikedComment(comment, user string, liked bool) error
+	IsCommentsLiked(card, user string) ([]bool, error)
 }
 
 // Comment struct in model layer
 type Comment struct {
-	ID      primitive.ObjectID `bson:"_id"`
-	OwnerID primitive.ObjectID `bson:"owner_id,omitempty"`
-	CardID  primitive.ObjectID `bson:"card_id,omitempty"`
-	Content string             `bson:"comment,omitempty"`
-	Status  int                `bson:"status,omitempty"`
+	ID         primitive.ObjectID   `bson:"_id"`
+	OwnerID    primitive.ObjectID   `bson:"owner_id,omitempty"`
+	CardID     primitive.ObjectID   `bson:"card_id,omitempty"`
+	Content    string               `bson:"comment,omitempty"`
+	LikedUsers []primitive.ObjectID `bson:"liked_users,omitempty"`
+	Status     int                  `bson:"status,omitempty"`
 
 	// Add more properties for comment
 
@@ -129,4 +133,81 @@ func (m *model) GetCommentWithOwner(commentID, owner string) (Comment, error) {
 		return comment, nil
 	}
 	return comment, err
+}
+
+// UpdateLikedComment by id. If the comment is not liked by user, add the user to liked_users list;
+// if the coment is liked by the user, cancel it.
+func (m *model) UpdateLikedComment(comment, user string, liked bool) error {
+	commentID, err := primitive.ObjectIDFromHex(comment)
+	if err != nil {
+		return err
+	}
+	userID, err := primitive.ObjectIDFromHex(user)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{
+		"_id": commentID,
+	}
+	operator := "$addToSet"
+	if liked {
+		operator = "$pull"
+	}
+	update := bson.M{
+		operator: bson.M{
+			"liked_users": userID,
+		},
+	}
+
+	res, err := m.commentC().UpdateOne(m.ctx, filter, update)
+	if err != nil {
+		return err
+	}
+	fmt.Println(res.MatchedCount)
+	return err
+}
+
+// IsCommentsLiked will return whether comments under the card is liked by
+func (m *model) IsCommentsLiked(card, user string) ([]bool, error) {
+	res := []bool{}
+	cardID, err := primitive.ObjectIDFromHex(card)
+	if err != nil {
+		return res, err
+	}
+	userID, err := primitive.ObjectIDFromHex(user)
+	if err != nil {
+		return res, err
+	}
+
+	cur, err := m.commentC().Aggregate(m.ctx, mongo.Pipeline{
+		{{Key: "$match", Value: bson.M{"card_id": cardID, "status": constant.StatusNormal}}},
+		{{Key: "$addFields", Value: bson.M{
+			"liked_users": bson.M{"$cond": bson.M{
+				"if": bson.M{
+					"$ne": objArray{bson.M{"$type": "$liked_users"}, "array"},
+				},
+				"then": objArray{},
+				"else": "$liked_users",
+			}},
+		},
+		}},
+		{{Key: "$addFields", Value: bson.M{
+			"liked": bson.M{"$in": objArray{userID, "$liked_users"}},
+		}}},
+		{{Key: "$project", Value: bson.M{"_id": 1, "liked": 1}}},
+	})
+	if err != nil {
+		return res, err
+	}
+	defer cur.Close(m.ctx)
+	result := map[string]interface{}{}
+	for cur.Next(m.ctx) {
+		err = cur.Decode(&result)
+		if err != nil {
+			return res, err
+		}
+		res = append(res, result["liked"].(bool))
+	}
+	return res, nil
 }

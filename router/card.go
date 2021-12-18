@@ -18,4 +18,5 @@ func initCardRouter(g *echo.Group) {
 	g.POST("/:id/comment", controller.NewComment)
 	g.GET("/:id/comment", controller.GetComments)
 	g.DELETE("/:id/comment/:comment_id", controller.DeleteComment)
+	g.PUT("/:id/comment/:comment_id/like", controller.UpdateLikedComment)
 }

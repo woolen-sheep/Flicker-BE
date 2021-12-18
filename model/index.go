@@ -7,6 +7,8 @@ import (
 	"github.com/woolen-sheep/Flicker-BE/config"
 )
 
+type objArray []interface{}
+
 type Model interface {
 	// Close will close database connection
 	Close()

@@ -698,6 +698,8 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
 #### 响应参数
 
 数组，每个元素包含**该条评论的 ID**, **发表评论的用户**, **评论内容**以及**评论最后一次更新时间**。
+- liked：布尔值，表示当前用户是否点赞过评论
+- likes：整数，评论的总点赞数目
 
 注：评论最后一次更新时间在默认情况下为发表评论时间，以Unix时间戳表示，如`1638775217`表示`2021-12-06 15:20:17 +0800 CST`。
 
@@ -713,7 +715,9 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
       "avatar": "https://example.com/a.jpg"
     },
     "comment": "comment",
-    "lastupdate": "1638775217"
+    "lastupdate": "1638775217",
+    "liked": false,
+    "likes": 0
   },
   {
     "id": "id",
@@ -723,7 +727,9 @@ GET /cardset/6193c1cfd9598aa1a050b041/card?ids=["6199cc46b4600da8e6102dad","619b
       "avatar": "https://example.com/a.jpg"
     },
     "comment": "comment",
-    "lastupdate": "1638775217"
+    "lastupdate": "1638775217",
+    "liked": false,
+    "likes": 0
   }
 ]
 ```
