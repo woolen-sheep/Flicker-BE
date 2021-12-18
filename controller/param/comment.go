@@ -9,6 +9,12 @@ type CommentResponseItem struct {
 	Owner      UserResponse `json:"owner"`
 	Comment    string       `json:"comment"`
 	LastUpdate string       `json:"lastupdate"`
+	Liked      bool         `json:"liked"`
+	Likes      int          `json:"likes"`
 }
 
 type GetCommentResponse = []CommentResponseItem
+
+type LikeCommentRequest struct {
+	Liked bool `json:"liked"`
+}

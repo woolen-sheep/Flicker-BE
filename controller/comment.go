@@ -88,8 +88,13 @@ func GetComments(c echo.Context) error {
 		return context.Success(c, make(param.GetCommentResponse, 0))
 	}
 
+	likes, err := m.IsCommentsLiked(cardIDHex, userIDHex)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when GetLiked", err)
+	}
+
 	var resp param.GetCommentResponse
-	for _, cmt := range comments {
+	for i, cmt := range comments {
 		user, exist, err := m.GetUser(cmt.OwnerID.Hex())
 		if !exist {
 			return context.Error(c, http.StatusNotFound, "user not found", nil)
@@ -107,6 +112,8 @@ func GetComments(c echo.Context) error {
 			},
 			Comment:    cmt.Content,
 			LastUpdate: fmt.Sprintf("%d", cmt.LastUpdateTime),
+			Liked:      likes[i],
+			Likes:      len(cmt.LikedUsers),
 		})
 	}
 
@@ -155,6 +162,26 @@ func DeleteComment(c echo.Context) error {
 		return context.Error(c, http.StatusInternalServerError, "error when DeleteComment", err)
 	}
 
+	return context.Success(c, "ok")
+}
+
+func UpdateLikedComment(c echo.Context) error {
+	commentIDHex := c.Param("comment_id")
+
+	userIDHex := context.GetJWTUserID(c)
+
+	p := param.LikeCommentRequest{}
+	err := c.Bind(&p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+	err = m.UpdateLikedComment(commentIDHex, userIDHex, p.Liked)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when UpdateLikedComment", err)
+	}
 	return context.Success(c, "ok")
 }
 
