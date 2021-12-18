@@ -7,6 +7,10 @@ type NewCardRequest struct {
 	Audio    string `json:"audio"`
 }
 
+type NewCardsRequest struct {
+	Cards []NewCardRequest `json:"cards"`
+}
+
 type UpdateCardRequest struct {
 	Question string `json:"question"`
 	Answer   string `json:"answer"`
