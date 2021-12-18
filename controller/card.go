@@ -52,6 +52,48 @@ func NewCard(c echo.Context) error {
 	return context.Success(c, cardID)
 }
 
+// NewCards will add new cards.
+func NewCards(c echo.Context) error {
+	p := param.NewCardsRequest{}
+	err := c.Bind(&p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+	err = c.Validate(p)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	cardsetIDHex := c.Param("cardset_id")
+	if len(cardsetIDHex) == 0 {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+
+	m := model.GetModel()
+	defer m.Close()
+
+	cardsetID, err := primitive.ObjectIDFromHex(cardsetIDHex)
+	if err != nil {
+		return context.Error(c, http.StatusBadRequest, "bad request", err)
+	}
+	cards := []model.Card{}
+	for _, card := range p.Cards {
+		cards = append(cards, model.Card{
+			CardsetID: cardsetID,
+			Question:  card.Question,
+			Answer:    card.Answer,
+			Image:     card.Image,
+			Audio:     card.Audio,
+			Status:    constant.StatusNormal,
+		})
+	}
+	cardsID, err := m.AddCards(cards)
+	if err != nil {
+		return context.Error(c, http.StatusInternalServerError, "error when AddCard", err)
+	}
+	return context.Success(c, cardsID)
+}
+
 // UpdateCard will update card info of current card. Empty fields will be ignored.
 func UpdateCard(c echo.Context) error {
 	cardsetID := c.Param("cardset_id")

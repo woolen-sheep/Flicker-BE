@@ -519,6 +519,41 @@ Authorization: Bearer 一个巨长的 token
 "id"
 ```
 
+### POST /many 批量新建卡片
+
+#### 请求参数
+
+- cards：对象数组，必需，由以下字段组成：
+  - question：字符串，必需，题面
+  - answer：字符串，必需，答案
+  - image：字符串，可选，图片 url
+  - audio：字符串，可选，音频 url
+
+#### 请求示例
+
+```json
+{
+  "cards": [
+    {
+      "question": "question",
+      "answer": "answer",
+      "image": "https://example.com/1.jpg",
+      "audio": "https://example.com/1.wav"
+    }
+  ]
+}
+```
+
+#### 响应参数
+
+卡片 id 列表
+
+#### 响应示例
+
+```json
+["id1","id2"]
+```
+
 ### PUT/:id 修改卡片
 
 #### 请求参数

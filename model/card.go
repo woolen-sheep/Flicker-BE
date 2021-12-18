@@ -13,6 +13,7 @@ const colNameCard = "card"
 
 type CardInterface interface {
 	AddCard(card Card) (string, error)
+	AddCards(card []Card) ([]string, error)
 	GetCard(id string) (Card, bool, error)
 	GetCardByIDList(ids []primitive.ObjectID) ([]Card, error)
 	GetCardInCardset(cardset string) ([]Card, error)
@@ -53,6 +54,24 @@ func (m *model) AddCard(card Card) (string, error) {
 		return "", err
 	}
 	return card.ID.Hex(), nil
+}
+
+// AddCards inserts new cards into database
+func (m *model) AddCards(card []Card) ([]string, error) {
+	ins := []interface{}{}
+	res := []string{}
+	for i := range card {
+		card[i].ID = primitive.NewObjectID()
+		card[i].CreateTime = time.Now().Unix()
+		card[i].LastUpdateTime = card[i].CreateTime
+		ins = append(ins, card[i])
+		res = append(res, card[i].ID.Hex())
+	}
+
+	if _, err := m.cardC().InsertMany(m.ctx, ins); err != nil {
+		return []string{}, err
+	}
+	return res, nil
 }
 
 // UpdateCard updates card info in database, empty fields will be ignore
