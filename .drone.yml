@@ -30,15 +30,16 @@ steps:
       - name: gopath
         path: /tmp/gopath
     commands:
-      - go test ./...
       - go build -o ./app
       - chmod +x ./app
 
   - name: scp_files
     image: appleboy/drone-scp
     when:
+      branch:
+        - master
       event:
-        - push
+        - merge
     settings:
       host:
         from_secret: ssh_host
@@ -53,8 +54,10 @@ steps:
   - name: deploy
     image: appleboy/drone-ssh
     when:
+      branch:
+        - master
       event:
-        - push
+        - merge
     settings:
       host:
         from_secret: ssh_host
