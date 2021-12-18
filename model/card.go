@@ -26,7 +26,7 @@ type CardInterface interface {
 type Card struct {
 	ID primitive.ObjectID `bson:"_id"`
 	// CardsetID is ID of set that the card belongs to
-	CardsetID primitive.ObjectID `bson:"cardset_id"`
+	CardsetID primitive.ObjectID `bson:"cardset_id,omitempty"`
 	Question  string             `bson:"question,omitempty"`
 	Answer    string             `bson:"answer,omitempty"`
 	Image     string             `bson:"image,omitempty"`
