@@ -9,4 +9,5 @@ var HTTPStatusZHCN = StatusDict{
 	http.StatusForbidden:           "没有访问权限",
 	http.StatusNotFound:            "资源未找到",
 	http.StatusInternalServerError: "内部错误",
+	http.StatusTooManyRequests:     "请求过于频繁",
 }

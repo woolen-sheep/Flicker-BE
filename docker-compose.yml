@@ -40,6 +40,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./configs:/configs
+      - ./static:/static
       - ./log:/app/log
     depends_on:
       - mongo

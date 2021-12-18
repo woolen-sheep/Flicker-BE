@@ -1,0 +1,75 @@
+<style>
+    p {
+        margin: 1em 0;
+    }
+
+    .container {
+        width: 462;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 4px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .logo {
+        width: 207px;
+        height: 76px;
+    }
+
+    .welcome {
+        font-family: Roboto;
+        font-size: 20px;
+        color: #205f4c;
+    }
+
+    .hint {
+        font-family: Roboto;
+        font-size: 16px;
+        text-align: center;
+        color: #000000;
+    }
+
+    .code-box {
+        background: #f1f1f1;
+        border-radius: 4px;
+        width: 224px;
+        margin: auto;
+        line-height: 55px;
+        text-align: center;
+    }
+
+    .code {
+        font-family: Roboto;
+        font-size: 20px;
+        color: #0f4c3a;
+        letter-spacing: 0.1em;
+    }
+
+    .notice {
+        font-family: Roboto;
+        font-size: 16px;
+        text-align: center;
+        color: #888888;
+    }
+</style>
+
+<div class="container">
+    <img
+            class="logo"
+            src="https://flicker-static.hust.online/logo/logo.svg"
+            alt="flicker logo"
+    />
+    <p class="welcome">您好~感谢使用 Flicker</p>
+    <p class="hint">
+        您的账号正在使用邮箱验证，<br/>
+        本次请求的验证码为：
+    </p>
+    <div class="code-box">
+        <span class="code"> {{CODE}} </span>
+    </div>
+    <p class="notice">
+        30分钟内有效，请不要外传。<br/>
+        若此操作非本人进行，请忽略此邮件。
+    </p>
+</div>
