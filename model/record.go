@@ -16,6 +16,7 @@ type RecordInterface interface {
 	UpdateRecord(record Record) error
 	GetRecords(cardsetID, ownerID primitive.ObjectID) ([]Record, error)
 	ClearRecords(cardsetID, ownerID primitive.ObjectID) error
+	GetLastStudyTime(cardsetID, ownerID primitive.ObjectID) int64
 }
 
 // Card struct in model layer
@@ -107,4 +108,26 @@ func (m *model) ClearRecords(cardsetID, ownerID primitive.ObjectID) error {
 	}
 	_, err := m.recordC().DeleteMany(m.ctx, filter)
 	return err
+}
+
+//GetLastStudyTime of certain cardset and user
+func (m *model) GetLastStudyTime(cardsetID, ownerID primitive.ObjectID) int64 {
+	record := []Record{}
+	filter := bson.M{
+		"cardset_id": cardsetID,
+		"owner_id":   ownerID,
+	}
+
+	opt := options.Find().SetLimit(1).SetSort(bson.M{"time": -1})
+	res, err := m.recordC().Find(m.ctx, filter, opt)
+	if err != nil {
+		return 0
+	}
+
+	err = res.All(m.ctx, &record)
+	if err != nil {
+		return 0
+	}
+
+	return record[0].LastStudy
 }

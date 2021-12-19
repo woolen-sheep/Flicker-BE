@@ -156,6 +156,8 @@ func GetCardset(c echo.Context) error {
 		return context.Error(c, http.StatusInternalServerError, "error when UpdateVisitCount", err)
 	}
 
+	lastStudy := m.GetLastStudyTime(cardset.ID, user.ID)
+
 	resp := param.GetCardsetResponse{
 		ID:            cardsetID,
 		OwnerID:       cardset.OwnerID.Hex(),
@@ -168,6 +170,7 @@ func GetCardset(c echo.Context) error {
 		CreateTime:    cardset.CreateTime,
 		Cards:         cardsIDs,
 		IsFavorite:    m.IsUserFavorite(userID, cardset.ID),
+		LastStudy:     lastStudy,
 	}
 	return context.Success(c, resp)
 }
