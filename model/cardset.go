@@ -38,9 +38,9 @@ type Cardset struct {
 	VisitCount    int                `bson:"visit_count,omitempty"`
 
 	// CreateTime is the first time of adding the cardset
-	CreateTime int64 `bson:"create_time"`
+	CreateTime int64 `bson:"create_time,omitempty"`
 	// LastUpdateTime is the last time of updating the cardset
-	LastUpdateTime int64 `bson:"update_time"`
+	LastUpdateTime int64 `bson:"update_time,omitempty"`
 }
 
 func (m *model) cardsetC() *mongo.Collection {
