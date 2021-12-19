@@ -33,4 +33,5 @@ type GetCardsetResponse struct {
 	CreateTime    int64    `json:"create_time"`
 	Cards         []string `json:"cards"`
 	IsFavorite    bool     `json:"is_favorite"`
+	LastStudy     int64    `json:"last_study"`
 }
