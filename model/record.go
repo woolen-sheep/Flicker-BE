@@ -125,7 +125,7 @@ func (m *model) GetLastStudyTime(cardsetID, ownerID primitive.ObjectID) int64 {
 	}
 
 	err = res.All(m.ctx, &record)
-	if err != nil {
+	if err != nil || len(record) == 0 {
 		return 0
 	}
 
